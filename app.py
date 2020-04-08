@@ -19,5 +19,11 @@ def insertNode():
 		myList.insertNode(0)
 	return {"print": myList.print(), "val": myList.getTail().value}
 
+@app.route('/reset-list')
+def resetList():
+	myList = None
+	myList = LinkedList()
+	return render_template("index.html", myList=myList)
+
 if __name__ == "__main__":
     app.run(debug=True)

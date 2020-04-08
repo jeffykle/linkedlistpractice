@@ -8,9 +8,10 @@ function load_page(name) {
   request.open('GET', `/${name}`);
   request.onload = () => {
     const response = request.responseText;
-    console.log(response)
-    document.querySelector('#print-list').innerHTML = response.json().print;
-    draw_node(response.val)
+    const json = JSON.parse(response)
+    console.log(json)
+    document.querySelector('#print-list').innerHTML = json.print.nodes;
+    draw_node(json.val)
   };
   request.send();
 }
@@ -19,15 +20,21 @@ function load_page(name) {
       function draw_node(val) {
 
       svg.append('circle')
-      .attr('cx', 10+25)
-      .attr('cy', 50)
+      .attr('cx', val*75+25)
+      .attr('cy', 100)
       .attr('r', 25)
+      .attr('id','node-'+val.toString())
       .style('fill', 'black');
   // console.log(coords)
 };
   
   document.querySelector('#insert-node').onclick = ()  => {
 load_page('insert-node')
+
+    };
+  document.querySelector('#reset-list').onclick = ()  => {
+     svg.selectAll("*").remove()
+load_page('reset-list')
 
     };
 
