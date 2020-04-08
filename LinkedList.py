@@ -29,11 +29,13 @@ class LinkedList:
             visual.append("->")
             current = current.next
         visual.append(None)
-        print(*visual," ")
+        string = ""
+        for e in visual:
+            string += f"{e} "
         if(self.head):
-            print(f"Head: {self.head.value}, Tail: {self.getTail().value}")
+            return {"nodes": string, "attr": f"Head: {self.head.value}, Tail: {self.getTail().value}"}
         else:
-            print(f"Head: {None}")
+            return {"nodes": "none", "attr": f"Head: {None}"}
 
     def reverse(self):
         prev = None
@@ -46,17 +48,19 @@ class LinkedList:
         self.head = prev
         return self
 
-myList = LinkedList()
-print('Empty list:')
-myList.print()
 
-listItems = ['A','B','C','D','E','F','G','H','I','J','K']
+if (__name__ == "__main__"):
+    myList = LinkedList()
+    print('Empty list:')
+    myList.print()
 
-for item in listItems:
-    myList.insertNode(item)
-myList.print()
+    listItems = ['A','B','C','D','E','F','G','H','I','J','K']
+
+    for item in listItems:
+        myList.insertNode(item)
+    myList.print()
 
 
-print('I reversed my list!')
-reverseMyList = myList.reverse()
-reverseMyList.print()
+    print('I reversed my list!')
+    reverseMyList = myList.reverse()
+    reverseMyList.print()
