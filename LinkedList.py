@@ -48,6 +48,25 @@ class LinkedList:
         self.head = prev
         return self
 
+    def pop(self):
+        current = self.head
+        tail = self.getTail()
+        prev = None
+        # print(tail.next)
+        # if(tail):
+        while (current and current.next != tail):
+            prev = current
+            current = current.next
+        current.next = None
+        return current
+
+    def deleteList(self):
+        while(self and self.head.next):
+            # print(self.print())
+            self.pop()
+        self.head = None
+        # print(self)
+        return self
 
 if (__name__ == "__main__"):
     myList = LinkedList()
@@ -58,9 +77,16 @@ if (__name__ == "__main__"):
 
     for item in listItems:
         myList.insertNode(item)
-    myList.print()
+    print(myList.print())
+    myList.pop()
+    print(myList.print())
 
 
-    print('I reversed my list!')
+    print('REVERSE THE LIST!')
     reverseMyList = myList.reverse()
-    reverseMyList.print()
+    print(reverseMyList.print())
+
+    myList.pop()
+    print(myList.print())
+    myList.deleteList()
+    print(myList.print())
