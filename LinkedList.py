@@ -61,11 +61,12 @@ class LinkedList:
         return current
 
     def deleteList(self):
-        while(self and self.head.next):
-            # print(self.print())
-            self.pop()
-        self.head = None
-        # print(self)
+        if(self.head):
+            while(self and self.head.next):
+                # print(self.print())
+                self.pop()
+            self.head = None
+            # print(self)
         return self
 
 if (__name__ == "__main__"):

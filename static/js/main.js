@@ -4,11 +4,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   function draw_node(val) {
-    const nodeId = 'node-'+val.toString()
+    const nodeId = 'node-'+val
 
       svg.append('circle')
       .attr('cx', val*75+25)
-      .attr('cy', 100)
+      .attr('cy', 100-25/4)
       .attr('r', 25)
       .attr('id',nodeId)
       .style('fill', 'lightblue')
@@ -21,9 +21,15 @@ document.addEventListener('DOMContentLoaded', () => {
     request.onload = () => {
       const response = request.responseText;
       const json = JSON.parse(response)
-      console.log(json)
-      document.querySelector('#print-list').innerHTML = json.print;
-      draw_node(json.val)
+      const attr = json.print.attr
+      const list = json.print.nodes
+
+      console.log(json.val==0)
+      document.querySelector('#list-attr').innerHTML = attr
+      document.querySelector('#list-nodes').innerHTML = list
+      
+      if(json.val != null){
+            draw_node(json.val)}
     };
     request.send();
   }

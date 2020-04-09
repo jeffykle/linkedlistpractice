@@ -9,7 +9,8 @@ myList = LinkedList()
 
 @app.route('/')
 def index():
-    return render_template("index.html", myList=myList)
+    print(myList.print())
+    return render_template("index.html", attr=myList.print()['attr'], list=myList.print()['nodes'])
 
 @app.route('/insert-node')
 def insertNode():
@@ -22,7 +23,8 @@ def insertNode():
 @app.route('/reset-list')
 def resetList():
     myList.deleteList()
-    return render_template("index.html", myList=myList)
+    # return render_template("index.html", myList=myList)
+    return {"print": myList.print(), "val": None}
 
 if __name__ == "__main__":
     app.run(debug=True)

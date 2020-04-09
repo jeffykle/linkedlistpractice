@@ -6,7 +6,19 @@
 </head>
 <body>
 
-  <h4 id="print-list">{{ myList }} </h4>
+  <h4 id="print-list">
+        <div class="row">
+          <h4 id="list-attr">
+            {{ attr }}
+          </h4>
+        </div>
+        <div class="row">
+          <h4 id="list-nodes">
+            {{ list }}
+          </h4>
+        </div>
+
+  {{ myList }} </h4>
 <button id="insert-node">Insert a node</button>
 <button id="reset-list">RESET</button>
 
