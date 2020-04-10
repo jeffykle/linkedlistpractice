@@ -18,8 +18,11 @@ class LinkedList:
         tail = self.getTail()
         if(self.head):
             tail.next = Node(value)
+            return tail.next
         else:    
             self.head = Node(value)
+            return self.head
+            
 
     def print(self):
         visual = []
