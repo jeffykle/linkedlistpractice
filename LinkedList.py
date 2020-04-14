@@ -23,19 +23,31 @@ class LinkedList:
 
     def print(self):
         visual = []
+        string = ""
         current = self.head
         while(current):
-            visual.append(current.value)
-            visual.append("->")
+            string+=str(current.value)+" -> "
             current = current.next
-        visual.append(None)
-        string = ""
-        for e in visual:
-            string += f"{e} "
+            print("Appending directly to the string")
+        string += "None"
         if(self.head):
             return {"nodes": string, "attr": f"Head: {self.head.value}, Tail: {self.getTail().value}"}
         else:
             return {"nodes": "none", "attr": f"Head: {None}"}
+    
+    def __str__(self):
+        visual = []
+        string = ""
+        current = self.head
+        while(current):
+            string += current.value+" -> "
+            current = current.next
+        string += "None"
+        if(self.head):
+            return f"\n{string}\nHead: {self.head.value}, Tail: {self.getTail().value}"
+        else:
+            return f"\nEmpty list\nHead: {None}"
+    
 
     def reverse(self):
         prev = None
@@ -52,8 +64,6 @@ class LinkedList:
         current = self.head
         tail = self.getTail()
         prev = None
-        # print(tail.next)
-        # if(tail):
         while (current and current.next != tail):
             prev = current
             current = current.next
@@ -63,31 +73,28 @@ class LinkedList:
     def deleteList(self):
         if(self.head):
             while(self and self.head.next):
-                # print(self.print())
                 self.pop()
             self.head = None
-            # print(self)
         return self
 
 if (__name__ == "__main__"):
     myList = LinkedList()
-    print('Empty list:')
-    myList.print()
+    print(myList)
 
     listItems = ['A','B','C','D','E','F','G','H','I','J','K']
 
     for item in listItems:
         myList.insertNode(item)
-    print(myList.print())
+    print(myList)
     myList.pop()
-    print(myList.print())
+    print(myList)
 
 
-    print('REVERSE THE LIST!')
+    print('\nREVERSE THE LIST!')
     reverseMyList = myList.reverse()
-    print(reverseMyList.print())
+    print(reverseMyList)
 
     myList.pop()
-    print(myList.print())
+    print(myList)
     myList.deleteList()
-    print(myList.print())
+    print(myList)
