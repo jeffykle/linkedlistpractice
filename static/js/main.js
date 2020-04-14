@@ -55,10 +55,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const json = JSON.parse(response)
             const attr = json.print.attr
             const list = json.print.nodes
+            const current = json.current
+            const previous = json.previous
 
             console.log(json.val==0)
             document.querySelector('#list-attr').innerHTML = attr
             document.querySelector('#list-nodes').innerHTML = list
+            document.querySelector('#location').innerHTML = `${current} <br> ${previous}`
 
             if(json.val != null){
                 draw_node(json.val)}
