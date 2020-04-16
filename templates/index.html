@@ -3,6 +3,7 @@
   <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
   <link rel="stylesheet" text="text/css" href="{{ url_for('static',filename='css/styles.css') }}">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
 
 <body>
@@ -20,15 +21,17 @@
         {{ attr }}
       </h4>
     </div>
-    <div class="row">
-      <h4 id="location">
-        {{ current }}
-        {{ previous }}
-      </h4>
-    </div>
+<!--     <h4 id="location">
+      <div class="row">
+        Current node: {{ current }}
+      </div>
+      <div class="row">
+        Previous node: {{ previous }}
+      </div>
+    </h4> -->
     <div class="row">
       <h4 id="list-nodes">
-        {{ list }}
+        List contents: {{ nodes }}
       </h4>
     </div>
 

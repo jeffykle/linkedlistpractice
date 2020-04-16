@@ -6,30 +6,26 @@ app = Flask(__name__)
 
 
 myList = LinkedList()
-global currentNode
-currentNode = None
-global previousNode
-previousNode = None
 
 @app.route('/')
 def index():
-    print(myList.print())
-    return render_template("index.html", attr=myList.print()['attr'], list=myList.print()['nodes'], current=currentNode, previous=previousNode)
+    print(myList)
+    return render_template("index.html", nodes=myList.attr()['nodes'], attr=myList.attr()['attr'], current=None, previous=None)
 
 @app.route('/insert-node')
 def insertNode():
     if (myList.head):
-        previousNode = currentNode
-        currentNode = myList.insertNode(myList.getTail().value+1)
+        previous = myList.head.dict()
+        myList.insertNode(myList.getTail().value+1)
     else:
-        currentNode = myList.insertNode(0)
-    return {"print": myList.print(), "val": myList.getTail().value, "current": currentNode, "previous": previousNode}
+        previous = {"value": None, "next": None}
+        myList.insertNode(0)
+    return {"attr": myList.attr(), "current": myList.getTail().dict(), "previous": previous}
 
 @app.route('/reset-list')
 def resetList():
     myList.deleteList()
-    # return render_template("index.html", myList=myList)
-    return {"print": myList.print(), "val": None}
+    return {"attr": myList.attr(), "current": None}
 
 if __name__ == "__main__":
     app.run(debug=True)

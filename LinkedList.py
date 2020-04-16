@@ -2,6 +2,15 @@ class Node:
     def __init__(self, value):
         self.value = value
         self.next = None
+    def dict(self):
+        if(self.next):
+            next = self.next.dict()
+        else:
+            next = None
+        return {
+            "value": self.value,
+            "next": next
+        }
 
 class LinkedList:
     def __init__(self):
@@ -24,26 +33,23 @@ class LinkedList:
             return self.head
             
 
-    def print(self):
-        visual = []
+    def attr(self):
         string = ""
         current = self.head
         while(current):
-            string+=str(current.value)+" -> "
+            string += str(current.value)+" -> "
             current = current.next
-            print("Appending directly to the string")
         string += "None"
         if(self.head):
             return {"nodes": string, "attr": f"Head: {self.head.value}, Tail: {self.getTail().value}"}
         else:
-            return {"nodes": "none", "attr": f"Head: {None}"}
+            return {"nodes": "None", "attr": "Head: None, Tail: None"}
     
     def __str__(self):
-        visual = []
         string = ""
         current = self.head
         while(current):
-            string += current.value+" -> "
+            string += str(current.value) + " -> "
             current = current.next
         string += "None"
         if(self.head):
