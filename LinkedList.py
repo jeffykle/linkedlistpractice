@@ -4,7 +4,7 @@ class Node:
         self.next = None
     def dict(self):
         if(self.next):
-            next = self.next.dict()
+            next = self.next.value
         else:
             next = None
         return {

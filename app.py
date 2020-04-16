@@ -15,12 +15,12 @@ def index():
 @app.route('/insert-node')
 def insertNode():
     if (myList.head):
-        previous = myList.head.dict()
+        previous = myList.getTail()
         myList.insertNode(myList.getTail().value+1)
     else:
-        previous = {"value": None, "next": None}
+        previous = Node(None)
         myList.insertNode(0)
-    return {"attr": myList.attr(), "current": myList.getTail().dict(), "previous": previous}
+    return {"attr": myList.attr(), "current": myList.getTail().dict(), "previous": previous.dict()}
 
 @app.route('/reset-list')
 def resetList():

@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if(json.current != null){
                 draw_node(json.current.value)}
-                console.log(`Current: ${JSON.stringify(json.current)}, Previous: ${JSON.stringify(json.previous)}`) //TODO fix recursive printing, or class recursion storing all previous node versions (check js console.log)
+                console.log(`Current: ${JSON.stringify(json.current)}, Previous: ${JSON.stringify(json.previous)}`)
             };
 
 
