@@ -22,6 +22,23 @@ def insertNode():
         myList.insertNode(0)
     return {"attr": myList.attr(), "current": myList.getTail().dict(), "previous": previous.dict()}
 
+
+# @app.route('/get-tail')
+# def get-tail():
+#     tail = myList.getTail()
+#     return {tail: tail.dict()}
+
+@app.route('/pop-node')
+def popNode():
+    tail = myList.getTail()
+    if(myList.head.next is not None):
+        myList.pop()
+    else:
+        myList.deleteList()
+        tail = myList.getTail()
+    return {"tail": tail.dict()}
+
+
 @app.route('/reset-list')
 def resetList():
     myList.deleteList()

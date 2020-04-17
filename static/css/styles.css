@@ -1,9 +1,38 @@
-#svg {
-	border: 1px solid black;
+body {
+	font-family: "Source Code Pro";
+	align-content: center;
 }
+
+#svg-row {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+
+/*#svg {
+	border: 1px solid black;
+}*/
+
+/*.bordered {
+	border: 1px solid black;
+}*/
 
 .arrow{
 	stroke-width:5;
 	stroke:#000;
 	stroke-dasharray:5, 5;
+}
+
+
+
+
+
+/*Renders page after all styles have applied*/
+html {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display:block !important;
+}
+
+button {
+	margin: 5px;
 }

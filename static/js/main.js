@@ -8,18 +8,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const svg = d3.select('#svg');
 
     document.querySelector('#insert-node').onclick = ()  => {
-        load_page('insert-node')
+        renderContent('insert-node')
+    };
+
+    document.querySelector('#pop-node').onclick = ()  => {
+        popNode()
+    };
+
+    document.querySelector('#get-head').onclick = ()  => {
+        // renderContent('insert-node')
+    };
+
+    document.querySelector('#get-next').onclick = ()  => {
+        // renderContent('insert-node')
     };
 
     document.querySelector('#reset-list').onclick = ()  => {
         svg.selectAll("*").remove()
         document.querySelector('#svg').style.height = "200px"
-        load_page('reset-list')
+        renderContent('reset-list')
     };
 
     function draw_node(val) {
-        let cx = 25+80*val
-        let cy = 93.75 * ( Math.ceil(cx / window.innerWidth) )
+        let cx = 25+80*val+50
+        let cy = 93.75 * ( Math.ceil(cx / (window.innerWidth - 75)) )
         let h = parseInt(document.querySelector('#svg').style.height, 10)
         // console.log({"window":window.innerWidth, "x": cx, "y": cy, "h": h})
         // if (cx > window.innerWidth) {
@@ -44,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr('cx', cx)
             .attr('cy', cy)
             .attr('r', 25)
-            .style('fill', 'lightblue')
+            .style('fill', '#0D3FA5')
 
         nodeShapes.append("line")
             .attr("id", "line-"+val)
@@ -67,9 +79,12 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr("d", "M 0 0 12 6 0 12 3 6")
             .style("fill", "black")
         nodeShapes.append('text')
-            .attr("x", cx-5*val.toString().length)
-            .attr("y", cy+5)
+            .attr("id", "node-label-"+val)
+            .attr("x", cx)//-5*val.toString().length)
+            .attr("y", cy+6.25)
             .attr("font-size", 20)
+            .style("fill","white")
+            .style("text-anchor", "middle")
             .text(val.toString())
         if( isNewLine ) {
             const prevLine = "#line-"+(val-1)
@@ -90,11 +105,12 @@ document.addEventListener('DOMContentLoaded', () => {
         d3.selectAll('.selected-node')
             .classed('selected-node',false)
         d3.selectAll('circle')
-                .style('fill', 'lightblue')
+                .style('fill', '#0D3FA5')
         d3.select('#Node-'+val)
             .selectAll('circle')
-                .style('fill', '#E8AC56')
+                .style('fill', '#F17D00')
             .classed('selected-node',true)
+        pulseNode(val)
         current = {
             "value": val,
             "next": val+1
@@ -112,8 +128,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }
 
+    function pulseNode(val) {
+        d3.select("#circle-"+val).raise()
+        d3.select("#node-label-"+val).raise()
+        d3.select("#circle-"+val)
+          .transition().duration(200).attr("r", "35")
+          .transition().duration(190).attr("r", "25")
+          .transition().duration(180).attr("r", "30")
+          .transition().duration(300).attr("r", "25")
+    }
 
-    function load_page(name) {
+
+    function renderContent(name) {
         const request = new XMLHttpRequest();
         request.open('GET', `/${name}`);
 
@@ -125,6 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.querySelector('#list-attr').innerHTML = json.attr.attr
             document.querySelector('#list-nodes').innerHTML = 'List contents: ' + json.attr.nodes
+            document.querySelector('#current').innerHTML = 'Current: ' + JSON.stringify(current)
+            document.querySelector('#previous').innerHTML = 'Previous: ' + JSON.stringify(previous)
 
             if(json.current != null){
                 draw_node(json.current.value)}
@@ -134,6 +162,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
         request.send();
     }
+
+    function popNode() {
+        const request = new XMLHttpRequest();
+        request.open('GET', `/pop-node`);
+
+        request.onload = () => {
+            const response = request.responseText;
+            const json = JSON.parse(response)
+            tail = json.tail
+            console.log('Got the tail from python: '+JSON.stringify(tail))
+
+            //modify innerhtml
+            // document.querySelector('#list-attr').innerHTML = json.attr.attr
+            // document.querySelector('#list-nodes').innerHTML = 'List contents: ' + json.attr.nodes
+            // document.querySelector('#current').innerHTML = 'Current: ' + JSON.stringify(current)
+            // document.querySelector('#previous').innerHTML = 'Previous: ' + JSON.stringify(previous)
+
+            //modify svg
+            console.log(tail.value)
+            if(tail.value != null){
+                document.querySelector('#Node-'+tail.value).remove()
+                console.log(`Popped ${JSON.stringify(tail)}`)
+            }
+            else {
+                console.log('DID NOT POP!')
+            }
+        };
+
+
+        request.send();
+    }
+
 
      /* For the drop shadow filter... */
   var defs = svg.append("defs");
