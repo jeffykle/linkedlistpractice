@@ -1,8 +1,8 @@
 body {
 	font-family: "Source Code Pro";
 	align-content: center;
-	background-color: #595959;
-	color: 'white';
+	background-color: 'white';
+	color: 'black';
 }
 
 #svg-row {
@@ -26,15 +26,16 @@ body {
 
 
 
+button {
+	margin: 5px;
+}
+
 
 
 /*Renders page after all styles have applied*/
 html {
+	background-color: white!important;
     visibility: visible !important;
     opacity: 1 !important;
     display:block !important;
-}
-
-button {
-	margin: 5px;
 }

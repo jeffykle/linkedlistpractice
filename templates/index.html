@@ -68,23 +68,24 @@
 		<div class="col-12">
 
 			<div class="row">
-			  	<span id="list-attr">
-					{{ attr }}
-				</span>
+				Head: <span id="head"> {{ myList.head }} </span>, Tail: <span id="tail"> {{ myList.getTail() }} </span>
 			</div>
 			<div class="row">
+					Current node:
 				<span id="current">
-					Current node: {{ current }}
+					{{ myList.current }}
 				</span>
 			</div>
 			<div class="row"> 
+					Previous node:
 				<span id="previous">
-					Previous node: {{ previous }}
+					{{ myList.previous }}
 				</span>
 			</div>
 			<div class="row">
+					List contents:
 				<span id="list-nodes">
-					List contents: {{ nodes }}
+					{{ myList.__str__() }}
 				</span>
 			</div>
 		</div>

@@ -8,14 +8,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const svg = d3.select('#svg');
 
     document.querySelector('#toggle-darkmode').onclick = ()  => {
-        const bgcolor = document.querySelector('body').style.backgroundColor
-        if(bgcolor != 'white'){
+        const bgcolor = window.getComputedStyle(document.querySelector('body')).backgroundColor
+        console.log('bgcolor: '+ bgcolor)
+        if(bgcolor != 'rgb(255, 255, 255)'){
             document.querySelector('body').style.backgroundColor = 'white'
             document.querySelector('body').style.color = 'black'
+            document.querySelectorAll('.btn-outline-light').forEach(btn => btn.classList.replace('btn-outline-light', 'btn-outline-dark'))
         }
         else {
-            document.querySelector('body').style.backgroundColor = '#595959'
+            document.querySelector('body').style.backgroundColor = '#1E1E1E'
             document.querySelector('body').style.color = 'white'
+            document.querySelectorAll('.btn-outline-dark').forEach(btn => btn.classList.replace('btn-outline-dark', 'btn-outline-light'))
         } 
     };
 
@@ -78,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr("x2", cx+50)
             .attr("y2", cy)          
             .attr("stroke-width", 1)
-            .attr("stroke", "black")
+            .attr("stroke", "#5A5A5A")
             .attr("marker-end", "url(#triangle)")
         // nodeShapes.append("svg:defs").append("svg:marker")
         nodeShapes.append("marker")
@@ -90,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .attr("orient", "auto")
             .append("path")
             .attr("d", "M 0 0 12 6 0 12 3 6")
-            .style("fill", "black")
+            .style("fill", "#5A5A5A")
         nodeShapes.append('text')
             .attr("id", "node-label-"+val)
             .attr("x", cx)//-5*val.toString().length)
@@ -151,72 +154,57 @@ document.addEventListener('DOMContentLoaded', () => {
           .transition().duration(300).attr("r", "25")
     }
 
-
-    function renderContent(name) {
+    function sendRequest(name, callback) {
         const request = new XMLHttpRequest();
         request.open('GET', `/${name}`);
-
         request.onload = () => {
-            const response = request.responseText;
-            const json = JSON.parse(response)
-            current = json.current
-            previous = json.previous
-
-            document.querySelector('#list-attr').innerHTML = json.attr.attr
-            document.querySelector('#list-nodes').innerHTML = 'List contents: ' + json.attr.nodes
-            document.querySelector('#current').innerHTML = 'Current: ' + JSON.stringify(current)
-            document.querySelector('#previous').innerHTML = 'Previous: ' + JSON.stringify(previous)
-
-            if(json.current != null){
-                draw_node(json.current.value)}
-                console.log(`Current: ${JSON.stringify(current)}, Previous: ${JSON.stringify(previous)}`)
-        };
-
-
+            callback(request)
+                    };
         request.send();
     }
 
-    function popNode() {
-        const request = new XMLHttpRequest();
-        request.open('GET', `/pop-node`);
+    function renderContent(name) {
+        sendRequest(name, request => {
+            const res = JSON.parse(request.responseText);
 
-        request.onload = () => {
-            const response = request.responseText;
-            const json = JSON.parse(response)
-            tail = json.tail
+            document.querySelector('#head').innerHTML = JSON.stringify(res.head.value)
+            document.querySelector('#tail').innerHTML = JSON.stringify(res.tail.value)
+            document.querySelector('#current').innerHTML = JSON.stringify(res.current.value)
+            document.querySelector('#previous').innerHTML = JSON.stringify(res.previous.value)
+            document.querySelector('#list-nodes').innerHTML = res.string
+
+            if(res.current != null){
+                draw_node(res.current.value)
+                selectNode(res.current.value)
+            }
+        })  
+    }
+
+    function popNode() {
+        sendRequest(name, request => {
+            const res = JSON.parse(request.responseText);
+            tail = res.tail
             console.log('Got the tail from python: '+JSON.stringify(tail))
 
-            //modify innerhtml
-            // document.querySelector('#list-attr').innerHTML = json.attr.attr
-            // document.querySelector('#list-nodes').innerHTML = 'List contents: ' + json.attr.nodes
-            // document.querySelector('#current').innerHTML = 'Current: ' + JSON.stringify(current)
-            // document.querySelector('#previous').innerHTML = 'Previous: ' + JSON.stringify(previous)
+            //modify innerhtml here
 
-            //modify svg
             console.log(tail.value)
             if(tail.value != null){
                 document.querySelector('#Node-'+tail.value).remove()
+                selectNode(res.previous.value)
                 console.log(`Popped ${JSON.stringify(tail)}`)
             }
             else {
                 console.log('DID NOT POP!')
             }
-        };
-
-
-        request.send();
+        })
     }
 
 
     function getHead() {
-        const request = new XMLHttpRequest();
-        request.open('GET', `/get-head`);
-
-        request.onload = () => {
-            const response = request.responseText;
-            console.log(response)
-            const json = JSON.parse(response)
-            const head = json.head
+        sendRequest(name, request => {
+            const res = JSON.parse(request.responseText);
+            const head = res.head
             console.log('Got the head from python: '+JSON.stringify(head))
 
             //modify innerhtml
@@ -231,7 +219,9 @@ document.addEventListener('DOMContentLoaded', () => {
             else {
                 console.log('DID NOT SELECT HEAD!')
             }
-        };
+        })
+    };
+
 
 
         request.send();
@@ -239,32 +229,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getNext(curVal) {
-        // const request = new XMLHttpRequest();
-        // request.open('GET', `/get-next`);
+        sendRequest(name, request => {
+            const res = JSON.parse(request.responseText);
 
-        // request.onload = () => {
-        //     const response = request.responseText;
-        //     console.log(response)
-        //     const json = JSON.parse(response)
-        //     head = json.head
-        //     console.log('Got the head from python: '+JSON.stringify(head))
-
-        //     //modify innerhtml
-        //     document.querySelector('#current').innerHTML = JSON.stringify(head)
-
-        //     //modify svg
-        //     console.log(head.value)
-        //     if(head.value != null){
-        //         selectNode(head.value)
-        //         console.log(`Selected Head:  ${JSON.stringify(head)}`)
-        //     }
-        //     else {
-        //         console.log('DID NOT SELECT HEAD!')
-        //     }
-        // };
-
-
-        // request.send();
+        })
     }
 
 

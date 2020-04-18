@@ -10,17 +10,12 @@ myList = LinkedList()
 @app.route('/')
 def index():
     print(myList)
-    return render_template("index.html", nodes=myList.attr()['nodes'], attr=myList.attr()['attr'], current=None, previous=None)
+    return render_template("index.html", myList = myList)
 
 @app.route('/insert-node')
 def insertNode():
-    if (myList.head):
-        previous = myList.getTail()
-        myList.insertNode(myList.getTail().value+1)
-    else:
-        previous = Node(None)
-        myList.insertNode(0)
-    return {"attr": myList.attr(), "current": myList.getTail().dict(), "previous": previous.dict()}
+    myList.insertNode(myList.getTail().value + 1 if  myList.head else 0)
+    return myList.json()
 
 @app.route('/pop-node')
 def popNode():
@@ -30,13 +25,13 @@ def popNode():
     else:
         myList.deleteList()
         tail = myList.getTail()
-    return {"tail": tail.dict()}
+    return {"tail": tail.json()}
 
 @app.route('/get-head')
 def getHead():
     head = myList.head
     if(head is not None):
-        return {"head": head.dict()}
+        return {"head": head.json()}
     else:
         return {"head": {
             "value": None,

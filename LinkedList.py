@@ -1,20 +1,23 @@
+import json
+
 class Node:
     def __init__(self, value):
         self.value = value
         self.next = None
-    def dict(self):
-        if(self.next):
-            next = self.next.value
-        else:
-            next = None
-        return {
-            "value": self.value,
-            "next": next
-        }
+    def json(self):
+        next = self.next.value if self.next else None
+        return dict(value = self.value, next = next)
+    # def json(self):
+    #     return json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)
+
 
 class LinkedList:
     def __init__(self):
         self.head = None
+        self.tail = self.getTail()
+        #User controlled attributes:
+        self.current = None
+        self.previous = None
     
     def getTail(self):
         current = self.head
@@ -24,50 +27,11 @@ class LinkedList:
         return current
 
     def insertNode(self, value):
-        tail = self.getTail()
         if(self.head):
-            tail.next = Node(value)
-            return tail.next
+            self.getTail().next = Node(value)
         else:    
             self.head = Node(value)
-            return self.head
-            
-
-    def attr(self):
-        string = ""
-        current = self.head
-        while(current):
-            string += str(current.value)+" -> "
-            current = current.next
-        string += "None"
-        if(self.head):
-            return {"nodes": string, "attr": f"Head: {self.head.value}, Tail: {self.getTail().value}"}
-        else:
-            return {"nodes": "None", "attr": "Head: None, Tail: None"}
-    
-    def __str__(self):
-        string = ""
-        current = self.head
-        while(current):
-            string += str(current.value) + " -> "
-            current = current.next
-        string += "None"
-        if(self.head):
-            return f"\n{string}\nHead: {self.head.value}, Tail: {self.getTail().value}"
-        else:
-            return f"\nEmpty list\nHead: {None}"
-    
-
-    def reverse(self):
-        prev = None
-        current = self.head
-        while(current):
-            next = current.next
-            current.next = prev 
-            prev = current 
-            current = next
-        self.head = prev
-        return self
+        return self.selectNode(self.getTail())
 
     def pop(self):
         current = self.head
@@ -86,6 +50,65 @@ class LinkedList:
             self.head = None
         return self
 
+    def reverse(self):
+        prev = None
+        current = self.head
+        while(current):
+            next = current.next
+            current.next = prev 
+            prev = current 
+            current = next
+        self.head = prev
+        return self
+    
+    def __str__(self):
+        string = ""
+        current = self.head
+        while(current):
+            string += str(current.value) + " -> "
+            current = current.next
+        string += "None"
+        return string
+
+    def attr(self):    ##TODELETE convert to json return
+        string = ""
+        current = self.head
+        while(current):
+            string += str(current.value)+" -> "
+            current = current.next
+        string += "None"
+        if(self.head):
+            return {"nodes": string, "attr": f"Head: {self.head.value}, Tail: {self.getTail().value}"}
+        else:
+            return {"nodes": "None", "attr": "Head: None, Tail: None"}
+
+    def selectNode(self, node):
+        self.previous = self.current
+        self.current = node
+        return self.current
+
+    def selectHead(self):
+        return self.selectNode(self.head)
+
+    def selectNext(self):
+        return self.selectNode(self.current.next)
+
+
+    def dict(self):
+        return dict(head = self.head, tail = self.getTail(), current = self.current, previous = self.previous, string=self.__str__())
+
+    def json(self):
+        return json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)
+
+
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj,'json'):
+            return obj.json()
+        else:
+            return json.JSONEncoder.default(self, obj)
+
+
 if (__name__ == "__main__"):
     myList = LinkedList()
     print(myList)
@@ -95,15 +118,22 @@ if (__name__ == "__main__"):
     for item in listItems:
         myList.insertNode(item)
     print(myList)
-    myList.pop()
-    print(myList)
-
-
-    print('\nREVERSE THE LIST!')
-    reverseMyList = myList.reverse()
-    print(reverseMyList)
 
     myList.pop()
     print(myList)
-    myList.deleteList()
+    print(myList.json())
+
+    myList.selectHead()
+    print('**Head selected**')
     print(myList)
+    print(myList.json())
+
+    myList.selectNext()
+    print('**Next selected**')
+    print(myList)
+    print(myList.json())
+
+    myList.reverse()
+    print('**List reversed**')
+    print(myList)
+    print(myList.json())
