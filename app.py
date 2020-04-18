@@ -22,12 +22,6 @@ def insertNode():
         myList.insertNode(0)
     return {"attr": myList.attr(), "current": myList.getTail().dict(), "previous": previous.dict()}
 
-
-# @app.route('/get-tail')
-# def get-tail():
-#     tail = myList.getTail()
-#     return {tail: tail.dict()}
-
 @app.route('/pop-node')
 def popNode():
     tail = myList.getTail()
@@ -38,6 +32,20 @@ def popNode():
         tail = myList.getTail()
     return {"tail": tail.dict()}
 
+@app.route('/get-head')
+def getHead():
+    head = myList.head
+    if(head is not None):
+        return {"head": head.dict()}
+    else:
+        return {"head": {
+            "value": None,
+            "next": None
+        }}
+
+@app.route('/get-next')
+def getNext(val):
+    return None #TODO
 
 @app.route('/reset-list')
 def resetList():

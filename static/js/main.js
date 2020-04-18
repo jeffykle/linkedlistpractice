@@ -7,6 +7,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const svg = d3.select('#svg');
 
+    document.querySelector('#toggle-darkmode').onclick = ()  => {
+        const bgcolor = document.querySelector('body').style.backgroundColor
+        if(bgcolor != 'white'){
+            document.querySelector('body').style.backgroundColor = 'white'
+            document.querySelector('body').style.color = 'black'
+        }
+        else {
+            document.querySelector('body').style.backgroundColor = '#595959'
+            document.querySelector('body').style.color = 'white'
+        } 
+    };
+
+
     document.querySelector('#insert-node').onclick = ()  => {
         renderContent('insert-node')
     };
@@ -16,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     document.querySelector('#get-head').onclick = ()  => {
-        // renderContent('insert-node')
+        getHead()
     };
 
     document.querySelector('#get-next').onclick = ()  => {
@@ -192,6 +205,66 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         request.send();
+    }
+
+
+    function getHead() {
+        const request = new XMLHttpRequest();
+        request.open('GET', `/get-head`);
+
+        request.onload = () => {
+            const response = request.responseText;
+            console.log(response)
+            const json = JSON.parse(response)
+            const head = json.head
+            console.log('Got the head from python: '+JSON.stringify(head))
+
+            //modify innerhtml
+            document.querySelector('#current').innerHTML = JSON.stringify(head)
+
+            //modify svg
+            console.log(head.value)
+            if(head.value != null){
+                selectNode(head.value)
+                console.log(`Selected Head:  ${JSON.stringify(head)}`)
+            }
+            else {
+                console.log('DID NOT SELECT HEAD!')
+            }
+        };
+
+
+        request.send();
+        return
+    }
+
+    function getNext(curVal) {
+        // const request = new XMLHttpRequest();
+        // request.open('GET', `/get-next`);
+
+        // request.onload = () => {
+        //     const response = request.responseText;
+        //     console.log(response)
+        //     const json = JSON.parse(response)
+        //     head = json.head
+        //     console.log('Got the head from python: '+JSON.stringify(head))
+
+        //     //modify innerhtml
+        //     document.querySelector('#current').innerHTML = JSON.stringify(head)
+
+        //     //modify svg
+        //     console.log(head.value)
+        //     if(head.value != null){
+        //         selectNode(head.value)
+        //         console.log(`Selected Head:  ${JSON.stringify(head)}`)
+        //     }
+        //     else {
+        //         console.log('DID NOT SELECT HEAD!')
+        //     }
+        // };
+
+
+        // request.send();
     }
 
 

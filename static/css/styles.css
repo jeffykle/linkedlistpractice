@@ -1,6 +1,8 @@
 body {
 	font-family: "Source Code Pro";
 	align-content: center;
+	background-color: #595959;
+	color: 'white';
 }
 
 #svg-row {
