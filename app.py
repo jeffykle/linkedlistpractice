@@ -15,37 +15,30 @@ def index():
 @app.route('/insert-node')
 def insertNode():
     myList.insertNode(myList.getTail().value + 1 if  myList.head else 0)
+    print(myList.json())
     return myList.json()
 
 @app.route('/pop-node')
 def popNode():
-    tail = myList.getTail()
-    if(myList.head.next is not None):
-        myList.pop()
-    else:
-        myList.deleteList()
-        tail = myList.getTail()
-    return {"tail": tail.json()}
+    myList.pop()
+    print(myList.json())
+    return myList.json()
 
 @app.route('/get-head')
 def getHead():
-    head = myList.head
-    if(head is not None):
-        return {"head": head.json()}
-    else:
-        return {"head": {
-            "value": None,
-            "next": None
-        }}
+    myList.current = myList.head
+    return myList.json()
 
 @app.route('/get-next')
-def getNext(val):
-    return None #TODO
+def getNext():
+    myList.selectNext()
+    return myList.json()
 
-@app.route('/reset-list')
-def resetList():
+@app.route('/delete-list')
+def deleteList():
     myList.deleteList()
-    return {"attr": myList.attr(), "current": None}
+    print(myList.json())
+    return myList.json()
 
 if __name__ == "__main__":
     app.run(debug=True)
