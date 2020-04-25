@@ -6,6 +6,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <style>html{visibility: hidden;opacity:0;display:none;}</style>
+
+  <script> //allows json to be passed from flask on first page load
+   var flaskData = JSON.parse('{{array | tojson | safe}}');
+   var array = flaskData.array;
+	</script>
   <link rel="stylesheet" text="text/css" href="{{ url_for('static',filename='css/styles.css') }}">
 </head>
 
@@ -18,44 +23,127 @@
 	<div class="container-fluid justify-content-center" id="controls-container">
 
 		<div class="row">
-			<div class="col-md-2 col-sm-1 bordered" id="left-controls-buffer">
+			<div class="col-md-2 col-sm-1 bordered" id="meta-controls">
+				<div class="row float-right">				
+					<button id="construct-list" type="button" class="btn btn-dark btn-inline .active" data-toggle="button" aria-pressed="true">Construct List</button>
+				</div>
+				<div class="row float-right">				
+					<button id="modify-list" type="button" class="btn btn-outline-dark btn-inline">Modify List</button>
+				</div>
 		  	</div>
 
-		  	<div class="col-md-8 col-sm-10 bordered" id="controls">
+		  	<div class="col-md-8 col-sm-10 bordered" id="center-control-panel">
 
-				<div class="row">
-				  	<div class="col-6">
-						<button id="insert-node" type="button" class="btn btn-outline-dark btn-block">Insert a node</button>
+			  	<div id="construct-controls" style="display: block;">
+
+					<div class="row">
+					  	<div class="col-6">
+							<button id="insert-node" type="button" class="btn btn-outline-dark btn-block">Insert a node</button>
+						</div>
+						<div class="col-6">
+							<button id="get-head" type="button" class="btn btn-outline-dark btn-block">Go to List.Head</button>
+						</div>
 					</div>
-					<div class="col-6">
-						<button id="get-head" type="button" class="btn btn-outline-dark btn-block">Go to List.Head</button>
+
+					<div class="row">
+						<div class="col-6">
+							<button id="pop-node" type="button" class="btn btn-outline-dark btn-block">Pop a node</button>
+						</div>
+						<div class="col-6">
+							<button id="get-next" type="button" class="btn btn-outline-dark btn-block">Go to Node.Next</button>
+						</div>
 					</div>
+
 				</div>
+			  	<div id="modify-controls" style="display: none;">
 
-				<div class="row">
-					<div class="col-6">
-						<button id="pop-node" type="button" class="btn btn-outline-dark btn-block">Pop a node</button>
+					<div class="row" id="row1">
+					  	<div class="col-4">
+							<button id="var1-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var1-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var1-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
 					</div>
-					<div class="col-6">
-						<button id="get-next" type="button" class="btn btn-outline-dark btn-block">Go to Node.Next</button>
+
+					<div class="row" id="row2">
+						<div class="col-4">
+							<button id="var2-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var2-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var2-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
 					</div>
+
+					<div class="row" id="row3">
+						<div class="col-4">
+							<button id="var3-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var3-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var3-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
+					</div>
+
+					<div class="row" id="row4">
+						<div class="col-4">
+							<button id="var4-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var4-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
+						<div class="col-4">
+							<button id="var4-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+						</div>
+					</div>
+
 				</div>
-
 			</div>
 
-			<div class="col-md-2 col-sm-1 float-right bordered">
+			<div class="col-md-2 col-sm-1 bordered" id="misc-controls">
 				<div class="row">				
-					<button id="delete-list" type="button" class="btn btn-outline-dark btn-inline">Delete List</button>
+					<button id="delete-list" type="button" class="btn btn-outline-dark btn-inline float-left">Delete List</button>
 				</div>
 				<div class="row">				
-					<button id="toggle-darkmode" type="button" class="btn btn-outline-dark btn-inline">Toggle Darkmode</button>
+					<button id="toggle-darkmode" type="button" class="btn btn-outline-dark btn-inline float-left">Toggle Darkmode</button>
 				</div>
 			</div>
 
 
 		</div>
 	</div>
+	
+	<div class="container-fluid" id="statement-container">
+		<div class="row justify-content-center">
+			<div class="col-md-2 col-sm-1 bordered" id="statement-buffer-left">
+			</div>
+			<div class="col-md-3 col-sm-4 bordered statement">
+				<h4 id="statement-var" class="statement statement-var" value="none"> ________</h4>
+			</div>
+			<div class="col-md-2 col-sm-2 bordered statement" >
+				<h4 class="statement statement-equals"> = </h4>
+			</div>
+			<div class="col-md-3 col-sm-4 bordered" id="statement">
+				<h4 id="statement-expr" class="statement statement-expr" value="none"> ________</h4>
+			</div>
+			<div class="col-md-2 col-sm-1 bordered" id="statement-buffer-right">
+				<span id="confirm" style="display: none;">
+					<span id="confirm-call">✓</span>
+					<span id="cancel-call">X</span>				
+				</span>
+			</div>
+		</div>
 
+	</div>	
+	
 	<div class="container-fluid" id="svg-row">
 
 			<svg id="svg" style="width:100%; height:200px"/>
@@ -64,29 +152,38 @@
 	</div>
 
 	<div class="container" id="info-container">
+		<div class="row">
+			<div class="col-6 col-md-6">
+				<div class="row">
+					Head: <span id="head"> {{ myList.head }} </span>, Tail: <span id="tail"> {{ myList.getTail() }} </span>
+				</div>
+				<div class="row">
+						Current node:
+					<span id="current">
+						{{ myList.current }}
+					</span>
+				</div>
+				<div class="row"> 
+						Previous node:
+					<span id="previous">
+						{{ myList.previous }}
+					</span>
+				</div>
+				<div class="row">
+						List contents:
+					<span id="list-nodes">
+						{{ myList.__str__() }}
+					</span>
+				</div>
+			</div>
 
-		<div class="col-12">
-
-			<div class="row">
-				Head: <span id="head"> {{ myList.head }} </span>, Tail: <span id="tail"> {{ myList.getTail() }} </span>
-			</div>
-			<div class="row">
-					Current node:
-				<span id="current">
-					{{ myList.current }}
-				</span>
-			</div>
-			<div class="row"> 
-					Previous node:
-				<span id="previous">
-					{{ myList.previous }}
-				</span>
-			</div>
-			<div class="row">
-					List contents:
-				<span id="list-nodes">
-					{{ myList.__str__() }}
-				</span>
+			<div class="col-6 col-md-6">
+				<div class="row">
+					Call History:
+				</div>
+				<div class="row" id="call-history">
+					List created
+				</div>
 			</div>
 		</div>
 	</div>

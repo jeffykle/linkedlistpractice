@@ -7,17 +7,15 @@ class Node:
     def json(self):
         next = self.next.value if self.next else None
         return dict(value = self.value, next = next)
-    # def json(self):
-    #     return json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)
-
 
 class LinkedList:
     def __init__(self):
         self.head = None
         self.tail = self.getTail()
-        #User controlled attributes:
+        # User controlled attributes:
         self.current = None
         self.previous = None
+        self.next = None
     
     def getTail(self):
         current = self.head
@@ -40,22 +38,20 @@ class LinkedList:
             previous = current
             current = current.next
             print(current.value)
-        self.previous = current
+        if(self.current == self.getTail()):
+            self.current = None
         if(previous):
-            current = self.current = previous
-            print(current.json())
+            current = previous
             current.next = None
         else:
             self.head = self.current = current = None
         return current
 
     def selectNode(self, node):
-        self.previous = self.current
         self.current = node
         return self.current
 
     def deleteList(self):
-        # if(self.head):
         while(self.head and self.head.next):
             self.pop()
         self.head = None
@@ -82,29 +78,34 @@ class LinkedList:
         string += "null"
         return string
 
-    # def attr(self):    ##TODELETE convert to json return
-    #     string = ""
-    #     current = self.head
-    #     while(current):
-    #         string += str(current.value)+" -> "
-    #         current = current.next
-    #     string += "None"
-    #     if(self.head):
-    #         return {"nodes": string, "attr": f"Head: {self.head.value}, Tail: {self.getTail().value}"}
-    #     else:
-    #         return {"nodes": "None", "attr": "Head: None, Tail: None"}
-
+    def list(self):
+        arr = []
+        current = self.head
+        while(current):
+            arr.append(current.value)
+            current = current.next
+        return arr
 
     def selectHead(self):
         return self.selectNode(self.head)
 
     def selectNext(self):
-        next = self.selectNode(self.current.next) if self.current.next else None
+        next = self.selectNode(self.current.next) if self.current and self.current.next else None
         return next
 
+    def diff(self, prevListDict):
+        toDiff = ['current', 'previous', 'next', 'head']
+        diffs = []
+        for key in toDiff:
+            attr = getattr(self,key).json() if getattr(self,key) else getattr(self,key)
+            prevAttr = prevListDict[key].json() if prevListDict[key] else prevListDict[key]
+            if(attr != prevAttr):
+                diffs.append(attr)
+                print(f'Diffs: {key}: {prevAttr} -> {attr}')
+        return {key: attr}
 
     def dict(self):
-        return dict(head = self.head, tail = self.getTail(), current = self.current, previous = self.previous, string=self.__str__())
+        return dict(head = self.head, tail = self.getTail(), current = self.current, previous = self.previous, next = self.next, string=self.__str__())
 
     def json(self):
         return json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)
