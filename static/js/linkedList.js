@@ -1,6 +1,6 @@
 import {drawNode, selectNode, toggleDarkmode, pulseNode, 
     eraseNode, eraseAll, resetMatrixButtons, resetCall, 
-    addToExpression, changeHead, addToHistory} from './animation.js'
+    addToExpression, changeHead, addToHistory, updateAttributes} from './animation.js'
 
 export function sendRequest(name, callback, ...args) {
     const request = new XMLHttpRequest();
@@ -18,12 +18,14 @@ export function sendRequest(name, callback, ...args) {
 
 export function insertNode() {
     sendRequest('insert-node', res => {
-        console.log(res)
-        document.querySelector('#head').innerHTML = JSON.stringify(res.head.value)
-        document.querySelector('#tail').innerHTML = JSON.stringify(res.tail.value)
-        document.querySelector('#current').innerHTML = JSON.stringify(res.current)
-        document.querySelector('#previous').innerHTML = JSON.stringify(res.previous)
-        document.querySelector('#list-nodes').innerHTML = res.string
+        console.log(typeof res.string)
+        console.log(res.string)
+        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
+        // document.querySelector('#head').innerHTML = JSON.stringify(res.head.value)
+        // document.querySelector('#tail').innerHTML = JSON.stringify(res.tail.value)
+        // document.querySelector('#current').innerHTML = JSON.stringify(res.current)
+        // document.querySelector('#previous').innerHTML = JSON.stringify(res.previous)
+        // document.querySelector('#list-nodes').innerHTML = res.string
 
         if(res.current != null){
             drawNode(res.current.value)
@@ -35,34 +37,33 @@ export function insertNode() {
 export function deleteList() {
     sendRequest('delete-list', res => {
         eraseAll()
-        document.querySelector('#head').innerHTML = JSON.stringify(res.head)
-        document.querySelector('#tail').innerHTML = JSON.stringify(res.tail)
-        document.querySelector('#current').innerHTML = JSON.stringify(res.current)
-        document.querySelector('#previous').innerHTML = JSON.stringify(res.previous)
-        document.querySelector('#list-nodes').innerHTML = res.string
+        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
+        // document.querySelector('#head').innerHTML = JSON.stringify(res.head)
+        // document.querySelector('#tail').innerHTML = JSON.stringify(res.tail)
+        // document.querySelector('#current').innerHTML = JSON.stringify(res.current)
+        // document.querySelector('#previous').innerHTML = JSON.stringify(res.previous)
+        // document.querySelector('#list-nodes').innerHTML = res.string
     })
 }
 
 export function popNode() {
     sendRequest('get-list', res => eraseNode(res.tail.value) )
     sendRequest('pop-node', res => {
-            document.querySelector('#head').innerHTML = JSON.stringify(res.head ? res.head.value : res.head)
-            document.querySelector('#tail').innerHTML = JSON.stringify(res.tail ? res.tail.value : res.tail)
-            document.querySelector('#current').innerHTML = JSON.stringify(res.current ? res.current.value : res.current)
-            document.querySelector('#previous').innerHTML = JSON.stringify(res.previous ? res.previous.value : res.previous)
-            document.querySelector('#list-nodes').innerHTML = res.string
+        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
+        
+            // document.querySelector('#head').innerHTML = JSON.stringify(res.head ? res.head.value : res.head)
+            // document.querySelector('#tail').innerHTML = JSON.stringify(res.tail ? res.tail.value : res.tail)
+            // document.querySelector('#current').innerHTML = JSON.stringify(res.current ? res.current.value : res.current)
+            // document.querySelector('#previous').innerHTML = JSON.stringify(res.previous ? res.previous.value : res.previous)
+            // document.querySelector('#list-nodes').innerHTML = res.string
     })
 }
 
 export function getHead() {
     sendRequest('get-head', res => {
         const head = res.head
-        console.log('Got the head from python: '+JSON.stringify(head))
+        updateAttributes(res, ['head','current']) 
 
-        //modify innerhtml
-        document.querySelector('#current').innerHTML = JSON.stringify(head)
-
-        //modify svg
         if(head && head.value != null){
             selectNode(head.value)
             console.log(`Selected Head:  ${JSON.stringify(head)}`)
@@ -115,20 +116,25 @@ export function sendCall(statementVar, statementExpr) {
     sendRequest('modify-list', res => {
         resetCall()
         addToHistory(statementVar, statementExpr)
+        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
         Object.keys(res).forEach( diff => {
-            console.log("Updating graphics for "+diff)
+            // console.log("Updating graphics for "+diff)
+            console.log(diff.split('.')[0]+'.next')
             switch (diff) {
                 case 'current':
-                    // statements_1
+                    selectNode(res.current.value)
                     break;
                 case 'previous':
-                    // statements_1
+                    // set "P" label
                     break;
                 case 'next':
-                    // statements_1
+                    // change arrow pointer
                     break;
                 case 'head':
                     changeHead(res.head.value)
+                    break;
+                case diff.split('.')[0]+'.next':
+                    console.log("Change an arrow pointer now")
                     break;
                 default:
                     // statements_def

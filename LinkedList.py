@@ -105,7 +105,11 @@ class LinkedList:
         return {key: attr}
 
     def dict(self):
-        return dict(head = self.head, tail = self.getTail(), current = self.current, previous = self.previous, next = self.next, string=self.__str__())
+        todict = dict()
+        for property, value in vars(self).items():
+            todict[property] = value
+        todict['string'] = self.__str__()
+        return todict#head = self.head, tail = self.getTail(), current = self.current, previous = self.previous, next = self.next, string=self.__str__())
 
     def json(self):
         return json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)

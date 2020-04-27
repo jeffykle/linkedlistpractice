@@ -135,9 +135,17 @@
 				<h4 id="statement-expr" class="statement statement-expr" value="none"> ________</h4>
 			</div>
 			<div class="col-md-2 col-sm-1 bordered" id="statement-buffer-right">
-				<span id="confirm" style="display: none;">
-					<span id="confirm-call">✓</span>
-					<span id="cancel-call">X</span>				
+				<span id="confirm">
+					<button class="btn btn-sm btn-outline-dark btn-inline" id="cancel-call" style="display: none;">
+<svg class="bi bi-backspace-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" d="M15.683 3a2 2 0 00-2-2h-7.08a2 2 0 00-1.519.698L.241 7.35a1 1 0 000 1.302l4.843 5.65A2 2 0 006.603 15h7.08a2 2 0 002-2V3zM5.829 5.854a.5.5 0 11.707-.708l2.147 2.147 2.146-2.147a.5.5 0 11.707.708L9.39 8l2.146 2.146a.5.5 0 01-.707.708L8.683 8.707l-2.147 2.147a.5.5 0 01-.707-.708L7.976 8 5.829 5.854z" clip-rule="evenodd"/>
+</svg>
+					</button>
+					<button class="btn btn-sm btn-outline-dark btn-inline" id="confirm-call" style="display: none;">
+<svg class="bi bi-caret-right-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 011.659-.753l5.48 4.796a1 1 0 010 1.506z"/>
+</svg>
+					</button>
 				</span>
 			</div>
 		</div>
@@ -181,8 +189,10 @@
 				<div class="row">
 					Call History:
 				</div>
-				<div class="row" id="call-history">
-					List created
+				<div class="row">
+					<ol id="call-history">
+						<li>List created</li>
+					</ol>
 				</div>
 			</div>
 		</div>

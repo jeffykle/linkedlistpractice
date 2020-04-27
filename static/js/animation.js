@@ -108,7 +108,6 @@ export function selectNode(val) {
 
 export function pulseNode(val) {
     d3.select("#circle-"+val).raise()
-    console.log(d3.select("#node-label-"+val))
     d3.select("#node-label-"+val).raise()
     d3.select("#circle-"+val)
       .transition().duration(200).attr("r", "35")
@@ -178,28 +177,43 @@ export function resetMatrixButtons() {
     event.srcElement.classList.replace('btn-outline-light','btn-light')
 }
 
-export function resetCall() {
+export function backspaceCall() {
+    if(document.querySelector("#statement-expr").attributes.value.value != 'none'){
+        document.querySelector("#statement-expr").attributes.value.value = "none"
+        document.querySelector("#statement-expr").innerHTML = "________"
+        document.querySelector("#confirm-call").style.display = "none"
+    }
+    else if(document.querySelector("#statement-var").attributes.value.value != 'none'){
         document.querySelector("#statement-var").innerHTML = "________"
         document.querySelector("#statement-var").attributes.value.value = "none"
-        document.querySelector("#statement-expr").innerHTML = "________"
+        document.querySelector("#cancel-call").style.display = "none"
+    }
+}
+
+export function resetCall() {
         document.querySelector("#statement-expr").attributes.value.value = "none"
-        document.querySelector("#confirm").style.display = "none"
+        document.querySelector("#statement-expr").innerHTML = "________"
+        document.querySelector("#confirm-call").style.display = "none"
+        document.querySelector("#statement-var").innerHTML = "________"
+        document.querySelector("#statement-var").attributes.value.value = "none"
+        document.querySelector("#cancel-call").style.display = "none"
 }
 
 export function addToExpression(event) {
     if(document.querySelector("#statement-var").attributes.value.value == 'none'){
         document.querySelector("#statement-var").innerHTML = event.srcElement.innerHTML
         document.querySelector("#statement-var").attributes.value.value = event.srcElement.attributes.value.value
+        document.querySelector("#cancel-call").style.display = "inline-block"
     }
     else if(document.querySelector("#statement-expr").attributes.value.value == 'none'){
         document.querySelector("#statement-expr").innerHTML = event.srcElement.innerHTML
         document.querySelector("#statement-expr").attributes.value.value = event.srcElement.attributes.value.value
-        document.querySelector("#confirm").style.display = "block"
+        document.querySelector("#confirm-call").style.display = "inline-block"
     }
 }
 
 export function addToHistory(statementVar, statementExpr) {
-    document.querySelector("#call-history").innerHTML += `<br>${statementVar} = ${statementExpr}`
+    document.querySelector("#call-history").innerHTML += `<li>${statementVar} = ${statementExpr}</li>`
 }
 
 export function changeHead(val) {
@@ -215,4 +229,23 @@ export function changeHead(val) {
         .style("fill","#22801D")
         .style("text-anchor", "middle")
         .text("H")
+}
+
+export function updateAttributes(res, elements) {
+        elements.forEach(attr => {
+                console.log(res)
+            switch (attr) {
+                case 'list-nodes':
+                    document.querySelector(`#list-nodes`).innerHTML = res['string']
+                    break;
+                // case 'head' || 'tail':
+                //     document.querySelector(`#${attr}`).innerHTML = res[attr].value
+                //     break;
+                default:
+                    console.log(attr)
+                    console.log(typeof res[attr])
+                    document.querySelector(`#${attr}`).innerHTML = JSON.stringify(res[attr] ? res[attr].value : res[attr])
+                    break;
+                }
+            })
 }

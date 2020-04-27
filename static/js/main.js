@@ -1,5 +1,5 @@
 import {sendRequest, insertNode, deleteList, popNode, getHead, getNext, getListVars, sendCall} from './linkedList.js'
-import {redrawList, toggleDarkmode, openContructControls, openModifyControls, resetCall} from './animation.js'
+import {redrawList, toggleDarkmode, openContructControls, openModifyControls, backspaceCall} from './animation.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('#toggle-darkmode').onclick = ()  => toggleDarkmode()
 
-    document.querySelector("#cancel-call").onclick = () => resetCall()
+    document.querySelector("#cancel-call").onclick = () => backspaceCall()
 
     document.querySelector("#confirm-call").onclick = () => {
         const statementVar = document.querySelector("#statement-var").attributes.value.value

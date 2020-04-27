@@ -48,15 +48,19 @@ def deleteList():
 
 @app.route('/modify-list')
 def modifyList():
-    prevList = myList.dict()
-    var = request.args.get('var').split('.')
-    expr = request.args.get('expr').split('.')
-    left = '.'.join(var)
-    right = getattr(myList, expr[0]) if len(expr) == 1 else getattr(getattr(myList, expr[0]), expr[1])
-    print(f'{left} = {right}')
+    prevList = myList #copy of existing list
+    print('prevList:..........................')
+    print(prevList)
+    var = request.args.get('var').split('.') # [previous, next]
+    expr = request.args.get('expr').split('.') # [current, next]
+    left = '.'.join(var) #current.next
+    right = getattr(myList, expr[0]) if len(expr) == 1 else getattr(getattr(myList, expr[0]), expr[1]) # previous OR previous.next
+    oldvalue = getattr(prevList, var[0]) if len(var) == 1 else getattr(getattr(prevList, var[0]), var[1])
     setattr(myList, left, right)
+    setattr(myList, "diff", oldvalue)
     print(myList.json())
-    return myList.diff(prevList)
+    
+    return myList.json(), {left: oldvalue}#myList.diff(prevList)
 
 if __name__ == "__main__":
     app.run(debug=True)
