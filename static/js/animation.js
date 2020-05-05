@@ -21,11 +21,7 @@ export function drawNode(val) {
         .attr('id', 'Node-'+val)
         .attr('x', cx)
         .attr('y', cy)
-        .on('click', function() {
-                        console.log(`Clicked Node-${val}!`)
-                        selectNode(val)
-                        }
-            )
+        .on('click', function() {selectNode(val)})
     nodeShapes.append('circle')
         .attr('id','circle-'+val)
         .attr('cx', cx)
@@ -42,7 +38,6 @@ export function drawNode(val) {
         .attr("stroke-width", 1)
         .attr("stroke", "#5A5A5A")
         .attr("marker-end", "url(#triangle)")
-    // nodeShapes.append("svg:defs").append("svg:marker")
     nodeShapes.append("marker")
         .attr("id", "triangle")
         .attr("refX", 6)
@@ -54,26 +49,26 @@ export function drawNode(val) {
         .attr("d", "M 0 0 12 6 0 12 3 6")
         .style("fill", "#5A5A5A")
     nodeShapes.append('text')
-        .attr("id", "node-label-"+val)
-        .attr("x", cx)//-5*val.toString().length)
+        .attr("id", `node-${val}-val`)
+        .attr("x", cx)
         .attr("y", cy+6.25)
         .attr("font-size", 20)
         .style("fill","white")
         .style("text-anchor", "middle")
         .text(val.toString())
-    if(val === 0) {
-        nodeShapes.append('text')
-        .attr("id", "node-head-label")
-        .attr("x", cx)//-5*val.toString().length)
+    nodeShapes.append('text')
+        .attr("id", `node-label-${val}`)
+        .attr("x", cx)
         .attr("y", cy+55)
         .attr("font-size", 20)
         .attr("font-weight", 900)
         .style("fill","#22801D")
         .style("text-anchor", "middle")
-        .text("H")
+    if(val === 0) {
+        document.querySelector('#node-label-0').innerHTML = "H"
     }
-    if( isNewLine ) {
-        const prevLine = "#line-"+(val-1)
+    if(isNewLine) {
+        const prevLine = `#line-${val-1}`
         const prevX1 = d3.select(prevLine).attr("x1")
         const prevY1 = d3.select(prevLine).attr("y1")
         console.log(prevX1,prevY1)
@@ -82,10 +77,33 @@ export function drawNode(val) {
             .attr("y1", cy-63.75)
             .attr("x2", cx+30)
             .attr("y2", cy-30)
-        }
-
-
+    }
 };
+
+export function changePointer(fromVal, toVal) {
+    console.log(typeof toVal)
+    const lineToMove = `#line-${fromVal}`
+    const fromPos = `#Node-${fromVal}`
+    const x1 = d3.select(fromPos).attr("x")
+    const y1 = d3.select(fromPos).attr("y")
+    if(toVal) {
+        const newPos = `#Node-${toVal}`
+        const x2 = d3.select(newPos).attr("x")
+        const y2 = d3.select(newPos).attr("y")
+        d3.select(lineToMove)
+            .attr("x1", x1 > x2 ? x1-25 : x1 + 25)
+            .attr("x2", x1 > x2 ? x2+25 : x2 - 25)
+            .attr("y1", y1-5)        
+            .attr("y2", y2-5) 
+    } else {
+        d3.select(lineToMove)
+            .attr("x1", x1)
+            .attr("x2", x1)
+            .attr("y1", y1-25)        
+            .attr("y2", y1-50)        
+    }
+
+}
 
 export function redrawList() {
     array.forEach((val, i) => {
@@ -93,6 +111,7 @@ export function redrawList() {
             i == array.length - 1 && selectNode(val)
         })
 }
+
 export function selectNode(val) {
     d3.selectAll('.selected-node')
         .classed('selected-node',false)
@@ -108,7 +127,7 @@ export function selectNode(val) {
 
 export function pulseNode(val) {
     d3.select("#circle-"+val).raise()
-    d3.select("#node-label-"+val).raise()
+    d3.select(`#node-${val}-val`).raise()
     d3.select("#circle-"+val)
       .transition().duration(200).attr("r", "35")
       .transition().duration(190).attr("r", "25")
@@ -127,7 +146,6 @@ export function eraseAll() {
 
 export function toggleDarkmode() {
     const bgcolor = window.getComputedStyle(document.querySelector('body')).backgroundColor
-    console.log('bgcolor: '+ bgcolor)
     if(bgcolor != 'rgb(255, 255, 255)'){
         document.querySelector('body').style.backgroundColor = 'white'
         document.querySelector('body').style.color = 'black'
@@ -216,34 +234,18 @@ export function addToHistory(statementVar, statementExpr) {
     document.querySelector("#call-history").innerHTML += `<li>${statementVar} = ${statementExpr}</li>`
 }
 
-export function changeHead(val) {
-    const headHeight = d3.select("#node-head-label").attr("y")
-    d3.select("#node-head-label").remove()
-    const newHead = d3.select(`#Node-${val}`)
-    newHead.append('text')
-        .attr("id", "node-head-label")
-        .attr("x", newHead.attr("x"))
-        .attr("y", headHeight)
-        .attr("font-size", 20)
-        .attr("font-weight", 900)
-        .style("fill","#22801D")
-        .style("text-anchor", "middle")
-        .text("H")
+export function changeLabel(val,label) {
+    document.querySelectorAll(`[id^=node-label]`).forEach(e => e.innerHTML = e.innerHTML.replace(label, ''))
+    document.querySelectorAll(`#node-label-${val}`).forEach(e => e.innerHTML += label) //foreach avoids no value found
 }
 
 export function updateAttributes(res, elements) {
         elements.forEach(attr => {
-                console.log(res)
             switch (attr) {
                 case 'list-nodes':
                     document.querySelector(`#list-nodes`).innerHTML = res['string']
                     break;
-                // case 'head' || 'tail':
-                //     document.querySelector(`#${attr}`).innerHTML = res[attr].value
-                //     break;
                 default:
-                    console.log(attr)
-                    console.log(typeof res[attr])
                     document.querySelector(`#${attr}`).innerHTML = JSON.stringify(res[attr] ? res[attr].value : res[attr])
                     break;
                 }

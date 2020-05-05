@@ -12,15 +12,23 @@ class LinkedList:
     def __init__(self):
         self.head = None
         self.tail = self.getTail()
-        # User controlled attributes:
         self.current = None
+        # User controlled attributes:
         self.previous = None
         self.next = None
     
     def getTail(self):
         current = self.head
+        previous = None
+        i = 0
         if(self.head):
             while (current and current.next):
+                i += 1
+                print('in tail while loop'+str(i))
+                if(current.next is not None and current.next == previous):
+                    current = None
+                else:
+                    previous = current
                     current = current.next
         return current
 
@@ -37,7 +45,6 @@ class LinkedList:
         while (current and current.next):
             previous = current
             current = current.next
-            print(current.value)
         if(self.current == self.getTail()):
             self.current = None
         if(previous):
@@ -72,10 +79,17 @@ class LinkedList:
     def __str__(self):
         string = ""
         current = self.head
+        previous = None
         while(current):
             string += str(current.value) + " -> "
+            if(current.next and current.next == previous):
+                # string += "*infinite loop*"
+                previous = 'loop'
+                current = None
+                break
+            previous = current
             current = current.next
-        string += "null"
+        string += "null" if previous != 'loop' else"*infinite loop*"
         return string
 
     def list(self):
@@ -93,26 +107,27 @@ class LinkedList:
         next = self.selectNode(self.current.next) if self.current and self.current.next else None
         return next
 
-    def diff(self, prevListDict):
-        toDiff = ['current', 'previous', 'next', 'head']
-        diffs = []
-        for key in toDiff:
-            attr = getattr(self,key).json() if getattr(self,key) else getattr(self,key)
-            prevAttr = prevListDict[key].json() if prevListDict[key] else prevListDict[key]
-            if(attr != prevAttr):
-                diffs.append(attr)
-                print(f'Diffs: {key}: {prevAttr} -> {attr}')
-        return {key: attr}
-
     def dict(self):
         todict = dict()
-        for property, value in vars(self).items():
-            todict[property] = value
+        # for property, value in vars(self).items():
+        #     print(f'setting {property} to {value}')
+        #     todict[property] = value
+
+        todict['head'] = self.head
+        todict['current'] = self.current
+        todict['previous'] = self.previous
+        todict['next'] = self.next
+
         todict['string'] = self.__str__()
-        return todict#head = self.head, tail = self.getTail(), current = self.current, previous = self.previous, next = self.next, string=self.__str__())
+        todict['tail'] = self.getTail()
+        print('-----> finished dict')
+        # try getting rid of str in dict, json, just leave it for the back end, maybe same for tail
+        return todict
 
     def json(self):
-        return json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)
+        result = json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)
+        print('-----> finished json')
+        return result
 
 
 class ComplexEncoder(json.JSONEncoder):

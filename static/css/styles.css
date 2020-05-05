@@ -34,6 +34,12 @@ button {
 	text-align: center;
 }
 
+.move-right{
+    display: inline;
+    float: right;
+    min-height: 10px;
+}
+
 
 
 

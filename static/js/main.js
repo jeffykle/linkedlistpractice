@@ -3,6 +3,8 @@ import {redrawList, toggleDarkmode, openContructControls, openModifyControls, ba
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    true && toggleDarkmode()
+
 	redrawList()
 
     document.querySelector('#construct-list').onclick = ()  => openContructControls()

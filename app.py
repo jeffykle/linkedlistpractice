@@ -17,13 +17,11 @@ def index():
 @app.route('/insert-node')
 def insertNode():
     myList.insertNode(myList.getTail().value + 1 if myList.head else 0)
-    print(myList.json())
     return myList.json()
 
 @app.route('/pop-node')
 def popNode():
     myList.pop()
-    print(myList.json())
     return myList.json()
 
 @app.route('/get-head')
@@ -43,24 +41,30 @@ def getList():
 @app.route('/delete-list')
 def deleteList():
     myList.deleteList()
-    print(myList.json())
     return myList.json()
 
 @app.route('/modify-list')
 def modifyList():
-    prevList = myList #copy of existing list
-    print('prevList:..........................')
-    print(prevList)
     var = request.args.get('var').split('.') # [previous, next]
     expr = request.args.get('expr').split('.') # [current, next]
-    left = '.'.join(var) #current.next
+    print("var: "+".".join(var))
+    print("expr: "+".".join(expr))
     right = getattr(myList, expr[0]) if len(expr) == 1 else getattr(getattr(myList, expr[0]), expr[1]) # previous OR previous.next
-    oldvalue = getattr(prevList, var[0]) if len(var) == 1 else getattr(getattr(prevList, var[0]), var[1])
-    setattr(myList, left, right)
-    setattr(myList, "diff", oldvalue)
-    print(myList.json())
+    oldvalue = getattr(myList, var[0]) if len(var) == 1 else getattr(getattr(myList, var[0]), var[1])
+    if(len(var)==1):
+        setattr(myList, var[0], right)
+    else:
+        setattr(getattr(myList,var[0]),"next",right)
+    print('about to jsonize list')
+    result = json.loads(myList.json())
+    print('new list was jsonized')
+    result['diff'] = {".".join(var): oldvalue}
+    result = json.dumps(result)
+    # newDict = myList.dict()
+    # newDict['diff'] = {".".join(var): oldvalue}
+    # returnVal = json.dumps(newDict, cls=ComplexEncoder, sort_keys=True, indent=4)
+    return result
     
-    return myList.json(), {left: oldvalue}#myList.diff(prevList)
 
 if __name__ == "__main__":
     app.run(debug=True)

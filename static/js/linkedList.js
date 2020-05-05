@@ -1,6 +1,6 @@
 import {drawNode, selectNode, toggleDarkmode, pulseNode, 
     eraseNode, eraseAll, resetMatrixButtons, resetCall, 
-    addToExpression, changeHead, addToHistory, updateAttributes} from './animation.js'
+    addToExpression, changeLabel, addToHistory, updateAttributes, changePointer} from './animation.js'
 
 export function sendRequest(name, callback, ...args) {
     const request = new XMLHttpRequest();
@@ -18,15 +18,7 @@ export function sendRequest(name, callback, ...args) {
 
 export function insertNode() {
     sendRequest('insert-node', res => {
-        console.log(typeof res.string)
-        console.log(res.string)
-        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
-        // document.querySelector('#head').innerHTML = JSON.stringify(res.head.value)
-        // document.querySelector('#tail').innerHTML = JSON.stringify(res.tail.value)
-        // document.querySelector('#current').innerHTML = JSON.stringify(res.current)
-        // document.querySelector('#previous').innerHTML = JSON.stringify(res.previous)
-        // document.querySelector('#list-nodes').innerHTML = res.string
-
+        updateAttributes(res, ['head','tail','current','previous','list-nodes'])
         if(res.current != null){
             drawNode(res.current.value)
             selectNode(res.current.value)
@@ -38,11 +30,6 @@ export function deleteList() {
     sendRequest('delete-list', res => {
         eraseAll()
         updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
-        // document.querySelector('#head').innerHTML = JSON.stringify(res.head)
-        // document.querySelector('#tail').innerHTML = JSON.stringify(res.tail)
-        // document.querySelector('#current').innerHTML = JSON.stringify(res.current)
-        // document.querySelector('#previous').innerHTML = JSON.stringify(res.previous)
-        // document.querySelector('#list-nodes').innerHTML = res.string
     })
 }
 
@@ -50,12 +37,6 @@ export function popNode() {
     sendRequest('get-list', res => eraseNode(res.tail.value) )
     sendRequest('pop-node', res => {
         updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
-        
-            // document.querySelector('#head').innerHTML = JSON.stringify(res.head ? res.head.value : res.head)
-            // document.querySelector('#tail').innerHTML = JSON.stringify(res.tail ? res.tail.value : res.tail)
-            // document.querySelector('#current').innerHTML = JSON.stringify(res.current ? res.current.value : res.current)
-            // document.querySelector('#previous').innerHTML = JSON.stringify(res.previous ? res.previous.value : res.previous)
-            // document.querySelector('#list-nodes').innerHTML = res.string
     })
 }
 
@@ -66,18 +47,13 @@ export function getHead() {
 
         if(head && head.value != null){
             selectNode(head.value)
-            console.log(`Selected Head:  ${JSON.stringify(head)}`)
         }
     })
 };
 
 export function getNext() {
     sendRequest('get-next', res => {
-        //modify innerhtml
-        document.querySelector('#current').innerHTML = JSON.stringify(res.current)
-        document.querySelector('#previous').innerHTML = JSON.stringify(res.previous)
-
-        //modify svg
+        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
         if(res.current != null){
             selectNode(res.current.value)
         }
@@ -114,35 +90,41 @@ export function getListVars() {
 
 export function sendCall(statementVar, statementExpr) {
     sendRequest('modify-list', res => {
+        console.log(JSON.stringify(res,null,'\t'))
+        console.log(Object.keys(res))
         resetCall()
         addToHistory(statementVar, statementExpr)
         updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
-        Object.keys(res).forEach( diff => {
-            // console.log("Updating graphics for "+diff)
-            console.log(diff.split('.')[0]+'.next')
+        Object.keys(res.diff).forEach( diff => {
             switch (diff) {
                 case 'current':
                     selectNode(res.current.value)
                     break;
                 case 'previous':
-                    // set "P" label
+                    changeLabel(res.previous.value,"P")
                     break;
                 case 'next':
-                    // change arrow pointer
+                    changeLabel(res.next.value,"N")
                     break;
                 case 'head':
-                    changeHead(res.head.value)
+                    changeLabel(res.head.value,"H")
                     break;
                 case diff.split('.')[0]+'.next':
-                    console.log("Change an arrow pointer now")
+                    const newNext = res[diff.split('.')[0]].next//res.current.next
+                    const nodeValToChange = res[diff.split('.')[0]].value
+                    console.log(`Change an arrow pointer now for  ${diff}`)
+                    console.log(`Point ${nodeValToChange} to ${newNext}`)
+                    // changePointer(nodeValToChange,newNext)
                     break;
                 default:
-                    // statements_def
+                    // Nothing to change
                     break;
             }
         })
-
     },
     statementVar, statementExpr)
+    // console.log("About to getListVars again!")
+    // getListVars()
+    // console.log("Got getListVars!")
 
 }
