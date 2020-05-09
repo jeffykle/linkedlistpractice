@@ -22,6 +22,7 @@ export function insertNode() {
         if(res.current != null){
             drawNode(res.current.value)
             selectNode(res.current.value)
+            document.querySelector(`#Node-${res.current.value}`).onclick = () => setClickedCurrent(res.current.value)
         }
     })  
 }
@@ -34,7 +35,9 @@ export function deleteList() {
 }
 
 export function popNode() {
-    sendRequest('get-list', res => eraseNode(res.tail.value) )
+    sendRequest('get-list', res => {
+        console.log(JSON.stringify(res,null,'\t'))
+        eraseNode(res.tail.value) })
     sendRequest('pop-node', res => {
         updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
     })
@@ -91,7 +94,6 @@ export function getListVars() {
 export function sendCall(statementVar, statementExpr) {
     sendRequest('modify-list', res => {
         console.log(JSON.stringify(res,null,'\t'))
-        console.log(Object.keys(res))
         resetCall()
         addToHistory(statementVar, statementExpr)
         updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
@@ -114,7 +116,7 @@ export function sendCall(statementVar, statementExpr) {
                     const nodeValToChange = res[diff.split('.')[0]].value
                     console.log(`Change an arrow pointer now for  ${diff}`)
                     console.log(`Point ${nodeValToChange} to ${newNext}`)
-                    // changePointer(nodeValToChange,newNext)
+                    changePointer(nodeValToChange,newNext)
                     break;
                 default:
                     // Nothing to change
@@ -123,8 +125,10 @@ export function sendCall(statementVar, statementExpr) {
         })
     },
     statementVar, statementExpr)
-    // console.log("About to getListVars again!")
-    // getListVars()
-    // console.log("Got getListVars!")
+}
 
+export function setClickedCurrent(val) {
+    const statementVar = "current"
+    const statementExpr = val
+    sendCall(statementVar, statementExpr) 
 }

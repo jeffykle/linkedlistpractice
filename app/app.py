@@ -12,11 +12,13 @@ def index():
     array = {
         'array': myList.list()
     }
+    print('Page reloaded.', flush=True)
     return render_template("index.html", myList = myList, array = array)
 
 @app.route('/insert-node')
 def insertNode():
     myList.insertNode(myList.getTail().value + 1 if myList.head else 0)
+    print('Node inserted', flush=True)
     return myList.json()
 
 @app.route('/pop-node')
@@ -46,25 +48,28 @@ def deleteList():
 @app.route('/modify-list')
 def modifyList():
     var = request.args.get('var').split('.') # [previous, next]
-    expr = request.args.get('expr').split('.') # [current, next]
-    print("var: "+".".join(var))
-    print("expr: "+".".join(expr))
-    right = getattr(myList, expr[0]) if len(expr) == 1 else getattr(getattr(myList, expr[0]), expr[1]) # previous OR previous.next
     oldvalue = getattr(myList, var[0]) if len(var) == 1 else getattr(getattr(myList, var[0]), var[1])
+    
+    expr = request.args.get('expr').split('.') # [current, next]
+    print(".".join(var)+" = "+".".join(expr))
+    if expr[0].isnumeric(): #clicking a node will pass in a numeric value to set as current
+        selected = myList.head
+        while selected.value != int(expr[0]):
+            selected = selected.next
+        right = selected
+    else:
+        right = getattr(myList, expr[0]) if len(expr) == 1 else getattr(getattr(myList, expr[0]), expr[1]) # previous OR previous.next
     if(len(var)==1):
         setattr(myList, var[0], right)
     else:
         setattr(getattr(myList,var[0]),"next",right)
-    print('about to jsonize list')
+
     result = json.loads(myList.json())
-    print('new list was jsonized')
-    result['diff'] = {".".join(var): oldvalue}
+    result['diff'] = {".".join(var): oldvalue.json() if oldvalue else oldvalue}
     result = json.dumps(result)
-    # newDict = myList.dict()
-    # newDict['diff'] = {".".join(var): oldvalue}
-    # returnVal = json.dumps(newDict, cls=ComplexEncoder, sort_keys=True, indent=4)
+    print(result)
     return result
     
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# if __name__ == "__main__":
+#     app.run(debug=True, host='0.0.0.0')

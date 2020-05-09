@@ -21,7 +21,7 @@ export function drawNode(val) {
         .attr('id', 'Node-'+val)
         .attr('x', cx)
         .attr('y', cy)
-        .on('click', function() {selectNode(val)})
+        // .on('click', function() {selectNode(val)})
     nodeShapes.append('circle')
         .attr('id','circle-'+val)
         .attr('cx', cx)
@@ -64,7 +64,7 @@ export function drawNode(val) {
         .attr("font-weight", 900)
         .style("fill","#22801D")
         .style("text-anchor", "middle")
-    if(val === 0) {
+    if(val ===  0) {
         document.querySelector('#node-label-0').innerHTML = "H"
     }
     if(isNewLine) {
@@ -81,20 +81,37 @@ export function drawNode(val) {
 };
 
 export function changePointer(fromVal, toVal) {
-    console.log(typeof toVal)
+    console.log(toVal === 0)
     const lineToMove = `#line-${fromVal}`
-    const fromPos = `#Node-${fromVal}`
-    const x1 = d3.select(fromPos).attr("x")
-    const y1 = d3.select(fromPos).attr("y")
-    if(toVal) {
+    const fromNode = d3.select(`#Node-${fromVal}`)
+    const x1 = parseFloat(fromNode.attr("x"))
+    const y1 = parseFloat(fromNode.attr("y"))
+    if(toVal || toVal === 0) {
         const newPos = `#Node-${toVal}`
-        const x2 = d3.select(newPos).attr("x")
-        const y2 = d3.select(newPos).attr("y")
-        d3.select(lineToMove)
-            .attr("x1", x1 > x2 ? x1-25 : x1 + 25)
-            .attr("x2", x1 > x2 ? x2+25 : x2 - 25)
-            .attr("y1", y1-5)        
-            .attr("y2", y2-5) 
+        const x2 = parseFloat(d3.select(newPos).attr("x"))
+        const y2 = parseFloat(d3.select(newPos).attr("y"))
+        console.log(`x1: ${x1}, x2: ${x2}`)
+        d3.select(lineToMove).remove()
+        const lg = d3.line().curve(d3.curveNatural);
+        console.log((x1+x2)/2)
+        const pathdata = lg([[x1,y1-30],[(x1+x2)/2,y1-50],[x2+6,y2-30]])
+
+        fromNode.append("path") 
+            .attr('d', pathdata)
+            .attr("id", "line-"+fromVal)
+            .attr("fill","none")
+            .attr("stroke", "#5A5A5A")
+            .attr("marker-end", "url(#triangle)")
+        fromNode.append("marker")
+            .attr("id", "triangle")
+            .attr("refX", 6)
+            .attr("refY", 6)
+            .attr("markerWidth", 30)
+            .attr("markerHeight", 30)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M 0 0 12 6 0 12 3 6")
+            .style("fill", "#5A5A5A")
     } else {
         d3.select(lineToMove)
             .attr("x1", x1)

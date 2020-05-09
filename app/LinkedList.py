@@ -4,32 +4,34 @@ class Node:
     def __init__(self, value):
         self.value = value
         self.next = None
+
     def json(self):
         next = self.next.value if self.next else None
         return dict(value = self.value, next = next)
 
+    def __eq__(self, other):
+            a = self.value if self else self
+            b = other.value if other else other
+            return a == b
+
 class LinkedList:
     def __init__(self):
         self.head = None
-        self.tail = self.getTail()
+        self.tail = None
         self.current = None
-        # User controlled attributes:
         self.previous = None
         self.next = None
     
+
     def getTail(self):
+        history = []
         current = self.head
-        previous = None
-        i = 0
-        if(self.head):
-            while (current and current.next):
-                i += 1
-                print('in tail while loop'+str(i))
-                if(current.next is not None and current.next == previous):
-                    current = None
-                else:
-                    previous = current
-                    current = current.next
+        while (current and current.next):
+            history.append(current)
+            for h in history:
+                if(current.next == h):
+                    return current
+            current = current.next
         return current
 
     def insertNode(self, value):
@@ -59,10 +61,7 @@ class LinkedList:
         return self.current
 
     def deleteList(self):
-        while(self.head and self.head.next):
-            self.pop()
-        self.head = None
-        self.current = self.previous = None
+        self.head = self.current = self.previous = None
         return self
 
     def reverse(self):
@@ -79,26 +78,27 @@ class LinkedList:
     def __str__(self):
         string = ""
         current = self.head
-        previous = None
-        while(current):
+        tail = self.getTail()
+
+        while(current != tail):
             string += str(current.value) + " -> "
-            if(current.next and current.next == previous):
-                # string += "*infinite loop*"
-                previous = 'loop'
-                current = None
-                break
             previous = current
             current = current.next
-        string += "null" if previous != 'loop' else"*infinite loop*"
+        string += str(current.value)+" -> null"  if current else "null"
         return string
 
     def list(self):
-        arr = []
+        history = []
+        result = []
         current = self.head
-        while(current):
-            arr.append(current.value)
+        while(current and current.next):
+            result.append(current.value)
+            history.append(current)
+            for h in history:
+                if(current.next == h):
+                    return result
             current = current.next
-        return arr
+        return result
 
     def selectHead(self):
         return self.selectNode(self.head)
@@ -108,25 +108,16 @@ class LinkedList:
         return next
 
     def dict(self):
-        todict = dict()
-        # for property, value in vars(self).items():
-        #     print(f'setting {property} to {value}')
-        #     todict[property] = value
-
-        todict['head'] = self.head
-        todict['current'] = self.current
-        todict['previous'] = self.previous
-        todict['next'] = self.next
-
-        todict['string'] = self.__str__()
-        todict['tail'] = self.getTail()
-        print('-----> finished dict')
-        # try getting rid of str in dict, json, just leave it for the back end, maybe same for tail
-        return todict
+        result = dict()
+        result['head'] = self.head
+        result['current'] = self.current
+        result['previous'] = self.previous
+        result['next'] = self.next
+        result['tail'] = self.getTail()
+        return result
 
     def json(self):
         result = json.dumps(self.dict(), cls=ComplexEncoder, sort_keys=True, indent=4)
-        print('-----> finished json')
         return result
 
 
@@ -138,16 +129,15 @@ class ComplexEncoder(json.JSONEncoder):
             return json.JSONEncoder.default(self, obj)
 
 
-if (__name__ == "__main__"):
-    myList = LinkedList()
-    print(myList.json())
+if __name__ == '__main__':
+    
+    ll = LinkedList()
+    print(ll)
+    nums = [0,1,2,3,4,5]
+    for n in nums:
+        ll.insertNode(n)
+    print(ll)
 
-    listItems = ['A','B','C','D','E','F','G','H','I','J','K']
-
-    for item in listItems:
-        myList.insertNode(item)
-    print(myList.json())
-
-    print('**Popping a node!**')
-    myList.pop()
-    print(myList.json())
+    t = ll.getTail()
+    print(ll)
+    print(ll.getTail().value)
