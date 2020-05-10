@@ -4,12 +4,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="http://d3js.org/d3.v4.min.js" charset="utf-8"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <style>html{visibility: hidden;opacity:0;display:none;}</style>
 
   <script> //allows json to be passed from flask on first page load
    var flaskData = JSON.parse('{{array | tojson | safe}}');
    var array = flaskData.array;
+   var myList = JSON.parse('{{ myList | tojson | safe}}')
+   console.log(array)
+   console.log(myList)
 	</script>
   <link rel="stylesheet" text="text/css" href="{{ url_for('static',filename='css/styles.css') }}">
 </head>
@@ -163,25 +169,19 @@
 		<div class="row">
 			<div class="col-6 col-md-6">
 				<div class="row">
-					Head: <span id="head"> {{ myList.head }} </span>, Tail: <span id="tail"> {{ myList.getTail() }} </span>
+					<button id="toggle-json" type="button"
+					class="btn btn-outline-dark btn-inline float-left"
+					data-toggle="collapse" data-target="#list-json" aria-expanded="false" aria-controls="list-json">Toggle Json</button>
 				</div>
 				<div class="row">
-						Current node:
-					<span id="current">
-						{{ myList.current }}
-					</span>
-				</div>
-				<div class="row"> 
-						Previous node:
-					<span id="previous">
-						{{ myList.previous }}
-					</span>
-				</div>
-				<div class="row">
-						List contents:
-					<span id="list-nodes">
-						{{ myList.__str__() }}
-					</span>
+					<div class="collapse" id="list-json">
+						<div class="card card-body">
+							<div id="json-data" style="white-space: pre-wrap;">
+								{{ myList }}
+							</div>
+						  	<!-- <pre><code id="json-data">{{ myList }}</code></pre> -->
+						</div>
+					</div>
 				</div>
 			</div>
 

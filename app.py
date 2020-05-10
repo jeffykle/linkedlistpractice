@@ -13,7 +13,7 @@ def index():
         'array': myList.list()
     }
     print('Page reloaded.', flush=True)
-    return render_template("index.html", myList = myList, array = array)
+    return render_template("index.html", myList = json.loads(myList.json()), array = array)
 
 @app.route('/insert-node')
 def insertNode():

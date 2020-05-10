@@ -122,10 +122,10 @@ export function changePointer(fromVal, toVal) {
 
 }
 
-export function redrawList() {
+export function redrawList(curVal) {
     array.forEach((val, i) => {
             drawNode(val)
-            i == array.length - 1 && selectNode(val)
+            i == array.length - 1 && selectNode(curVal)
         })
 }
 
@@ -166,12 +166,16 @@ export function toggleDarkmode() {
     if(bgcolor != 'rgb(255, 255, 255)'){
         document.querySelector('body').style.backgroundColor = 'white'
         document.querySelector('body').style.color = 'black'
+        document.querySelector('.card').style.backgroundColor = 'white'
+        document.querySelector('.card').style.color = 'black'
         document.querySelectorAll('.btn-outline-light').forEach(btn => btn.classList.replace('btn-outline-light', 'btn-outline-dark'))
         document.querySelectorAll('.btn-light').forEach(btn => btn.classList.replace('btn-light', 'btn-dark'))
     }
     else {
         document.querySelector('body').style.backgroundColor = '#1E1E1E'
         document.querySelector('body').style.color = 'white'
+        document.querySelector('.card').style.backgroundColor = '#1E1E1E'
+        document.querySelector('.card').style.color = 'white'
         document.querySelectorAll('.btn-outline-dark').forEach(btn => btn.classList.replace('btn-outline-dark', 'btn-outline-light'))
         document.querySelectorAll('.btn-dark').forEach(btn => btn.classList.replace('btn-dark', 'btn-light'))
     } 
@@ -256,15 +260,6 @@ export function changeLabel(val,label) {
     document.querySelectorAll(`#node-label-${val}`).forEach(e => e.innerHTML += label) //foreach avoids no value found
 }
 
-export function updateAttributes(res, elements) {
-        elements.forEach(attr => {
-            switch (attr) {
-                case 'list-nodes':
-                    document.querySelector(`#list-nodes`).innerHTML = res['string']
-                    break;
-                default:
-                    document.querySelector(`#${attr}`).innerHTML = JSON.stringify(res[attr] ? res[attr].value : res[attr])
-                    break;
-                }
-            })
+export function updateAttributes(res) {
+    document.querySelector(`#json-data`).innerHTML = JSON.stringify(res,null,2)
 }

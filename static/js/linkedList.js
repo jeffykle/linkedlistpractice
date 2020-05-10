@@ -18,7 +18,7 @@ export function sendRequest(name, callback, ...args) {
 
 export function insertNode() {
     sendRequest('insert-node', res => {
-        updateAttributes(res, ['head','tail','current','previous','list-nodes'])
+        updateAttributes(res)
         if(res.current != null){
             drawNode(res.current.value)
             selectNode(res.current.value)
@@ -30,7 +30,7 @@ export function insertNode() {
 export function deleteList() {
     sendRequest('delete-list', res => {
         eraseAll()
-        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
+        updateAttributes(res) 
     })
 }
 
@@ -39,14 +39,14 @@ export function popNode() {
         console.log(JSON.stringify(res,null,'\t'))
         eraseNode(res.tail.value) })
     sendRequest('pop-node', res => {
-        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
+        updateAttributes(res) 
     })
 }
 
 export function getHead() {
     sendRequest('get-head', res => {
         const head = res.head
-        updateAttributes(res, ['head','current']) 
+        updateAttributes(res) 
 
         if(head && head.value != null){
             selectNode(head.value)
@@ -56,7 +56,7 @@ export function getHead() {
 
 export function getNext() {
     sendRequest('get-next', res => {
-        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
+        updateAttributes(res) 
         if(res.current != null){
             selectNode(res.current.value)
         }
@@ -95,21 +95,22 @@ export function sendCall(statementVar, statementExpr) {
     sendRequest('modify-list', res => {
         console.log(JSON.stringify(res,null,'\t'))
         resetCall()
+        getListVars(res)
         addToHistory(statementVar, statementExpr)
-        updateAttributes(res, ['head','tail','current','previous','list-nodes']) 
+        updateAttributes(res) 
         Object.keys(res.diff).forEach( diff => {
             switch (diff) {
                 case 'current':
-                    selectNode(res.current.value)
+                    res.current && selectNode(res.current.value)
                     break;
                 case 'previous':
-                    changeLabel(res.previous.value,"P")
+                    res.previous && changeLabel(res.previous.value,"P")
                     break;
                 case 'next':
-                    changeLabel(res.next.value,"N")
+                    res.next && changeLabel(res.next.value,"N")
                     break;
                 case 'head':
-                    changeLabel(res.head.value,"H")
+                    res.head && changeLabel(res.head.value,"H")
                     break;
                 case diff.split('.')[0]+'.next':
                     const newNext = res[diff.split('.')[0]].next//res.current.next

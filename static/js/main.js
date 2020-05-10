@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     true && toggleDarkmode()
 
-	redrawList()
+	myList.current && redrawList(myList.current.value)
 
     document.querySelector('#construct-list').onclick = ()  => openContructControls()
 

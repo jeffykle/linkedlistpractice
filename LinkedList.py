@@ -61,7 +61,7 @@ class LinkedList:
         return self.current
 
     def deleteList(self):
-        self.head = self.current = self.previous = None
+        self.head = self.current = self.previous = self.next = None
         return self
 
     def reverse(self):
@@ -98,6 +98,7 @@ class LinkedList:
                 if(current.next == h):
                     return result
             current = current.next
+        result.append(current.value if current else current)
         return result
 
     def selectHead(self):
