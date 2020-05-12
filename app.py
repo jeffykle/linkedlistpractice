@@ -71,6 +71,5 @@ def modifyList():
     print(result)
     return result
     
-
 if __name__ == "__main__":
-    app.run(port=os.environ['PORT'])
+    app.run(host='0.0.0.0')
