@@ -2,11 +2,10 @@
 
 const svg = d3.select('#svg');
 
-export function drawNode(val) {
+export function drawNode(val, toVal = null) {
     let cx = 25+80*val+50
     let cy = 93.75 * ( Math.ceil(cx / (window.innerWidth - 75)) )
     let h = parseInt(document.querySelector('#svg').style.height, 10)
-    // console.log({"window":window.innerWidth, "x": cx, "y": cy, "h": h})
     // if (cx > window.innerWidth) {
         // cy = cy 
     const isNewLine = cy + 25 > h
@@ -21,33 +20,13 @@ export function drawNode(val) {
         .attr('id', 'Node-'+val)
         .attr('x', cx)
         .attr('y', cy)
-        // .on('click', function() {selectNode(val)})
+        .on('click', function() {selectNode(val)})
     nodeShapes.append('circle')
         .attr('id','circle-'+val)
         .attr('cx', cx)
         .attr('cy', cy)
         .attr('r', 25)
         .style('fill', '#0D3FA5')
-
-    nodeShapes.append("line")
-        .attr("id", "line-"+val)
-        .attr("x1", cx+25)
-        .attr("y1", cy)
-        .attr("x2", cx+50)
-        .attr("y2", cy)          
-        .attr("stroke-width", 1)
-        .attr("stroke", "#5A5A5A")
-        .attr("marker-end", "url(#triangle)")
-    nodeShapes.append("marker")
-        .attr("id", "triangle")
-        .attr("refX", 6)
-        .attr("refY", 6)
-        .attr("markerWidth", 30)
-        .attr("markerHeight", 30)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M 0 0 12 6 0 12 3 6")
-        .style("fill", "#5A5A5A")
     nodeShapes.append('text')
         .attr("id", `node-${val}-val`)
         .attr("x", cx)
@@ -64,6 +43,9 @@ export function drawNode(val) {
         .attr("font-weight", 900)
         .style("fill","#22801D")
         .style("text-anchor", "middle")
+
+    // drawPointer(val, toVal)
+
     if(val ===  0) {
         document.querySelector('#node-label-0').innerHTML = "H"
     }
@@ -71,7 +53,6 @@ export function drawNode(val) {
         const prevLine = `#line-${val-1}`
         const prevX1 = d3.select(prevLine).attr("x1")
         const prevY1 = d3.select(prevLine).attr("y1")
-        console.log(prevX1,prevY1)
         d3.select(prevLine)
             .attr("x1", prevX1-25)
             .attr("y1", cy-63.75)
@@ -80,28 +61,109 @@ export function drawNode(val) {
     }
 };
 
-export function changePointer(fromVal, toVal) {
-    console.log(toVal === 0)
+export function drawPointer(fromVal, toVal = null) {
+    console.log(toVal)
     const lineToMove = `#line-${fromVal}`
     const fromNode = d3.select(`#Node-${fromVal}`)
     const x1 = parseFloat(fromNode.attr("x"))
     const y1 = parseFloat(fromNode.attr("y"))
     if(toVal || toVal === 0) {
-        const newPos = `#Node-${toVal}`
-        const x2 = parseFloat(d3.select(newPos).attr("x"))
-        const y2 = parseFloat(d3.select(newPos).attr("y"))
-        console.log(`x1: ${x1}, x2: ${x2}`)
-        d3.select(lineToMove).remove()
-        const lg = d3.line().curve(d3.curveNatural);
-        console.log((x1+x2)/2)
-        const pathdata = lg([[x1,y1-30],[(x1+x2)/2,y1-50],[x2+6,y2-30]])
+        const newPos = d3.select(`#Node-${toVal}`)
+        const x2 = newPos ? parseFloat(newPos.attr("x")) : null
+        const y2 = newPos ? parseFloat(newPos.attr("y")) : null
+        lineToMove && d3.select(lineToMove).remove()
 
-        fromNode.append("path") 
-            .attr('d', pathdata)
+        if(x1 < x2) {
+            fromNode.append("line")
+                .attr("id", "line-"+fromVal)
+                .attr("class","line")
+                .attr("x1", x1+25)
+                .attr("y1", y1)
+                .attr("x2", x2-25-6)
+                .attr("y2", y1)          
+                .attr("stroke-width", 1)
+                .attr("stroke", "#5A5A5A")
+                .attr("marker-end", "url(#triangle)")
+            fromNode.append("marker")
+                .attr("id", "triangle")
+                .attr("class","line")
+                .attr("refX", 6)
+                .attr("refY", 6)
+                .attr("markerWidth", 30)
+                .attr("markerHeight", 30)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M 0 0 12 6 0 12 3 6")
+                .style("fill", "#5A5A5A")
+
+        } else if(x1 === x2) { 
+            // point to itself
+            const lineGenerator = d3.line().curve(d3.curveNatural);
+            const pathdata = lineGenerator([[x1+15,y1-30],[x1+20,y1-50],[x1,y1-60],[x1-20,y1-50],[x1-15,y1-30]])
+
+            fromNode.append("path") 
+                .attr('d', pathdata)
+                .attr("id", "line-"+fromVal)
+                .attr("fill","none")
+                .attr("stroke", "#5A5A5A")
+                .attr("marker-end", "url(#triangle)")
+            fromNode.append("marker")
+                .attr("id", "triangle")
+                .attr("refX", 6)
+                .attr("refY", 6)
+                .attr("markerWidth", 30)
+                .attr("markerHeight", 30)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M 0 0 12 6 0 12 3 6")
+                .style("fill", "#5A5A5A")
+        } else {
+            const lineGenerator = d3.line().curve(d3.curveNatural);
+            const pathdata = lineGenerator([[x1,y1-30],[(x1+x2)/2,y1-50],[x2+6,y2-30]])
+
+            fromNode.append("path") 
+                .attr('d', pathdata)
+                .attr("id", "line-"+fromVal)
+                .attr("fill","none")
+                .attr("stroke", "#5A5A5A")
+                .attr("marker-end", "url(#triangle)")
+            fromNode.append("marker")
+                .attr("id", "triangle")
+                .attr("refX", 6)
+                .attr("refY", 6)
+                .attr("markerWidth", 30)
+                .attr("markerHeight", 30)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M 0 0 12 6 0 12 3 6")
+                .style("fill", "#5A5A5A")
+        }
+
+    } else { 
+        // point to nothing
+        const isNext = d3.select(`#Node-${fromVal+1}`)
+        if(!isNext) { // pointforward
+        fromNode.append("line")
             .attr("id", "line-"+fromVal)
-            .attr("fill","none")
+            .attr("x1", x1)
+            .attr("y1", y1-25)
+            .attr("x2", x1)
+            .attr("y2", y1-50)          
+            .attr("stroke-width", 1)
             .attr("stroke", "#5A5A5A")
             .attr("marker-end", "url(#triangle)")
+        }
+        else{ //point up
+        fromNode.append("line")
+            .attr("id", "line-"+fromVal)
+            .attr("x1", x1+25)
+            .attr("y1", y1)
+            .attr("x2", x1+50)
+            .attr("y2", y1)    
+            .attr("stroke-width", 1)
+            .attr("stroke", "#5A5A5A")
+            .attr("marker-end", "url(#triangle)")
+        }
         fromNode.append("marker")
             .attr("id", "triangle")
             .attr("refX", 6)
@@ -111,22 +173,23 @@ export function changePointer(fromVal, toVal) {
             .attr("orient", "auto")
             .append("path")
             .attr("d", "M 0 0 12 6 0 12 3 6")
-            .style("fill", "#5A5A5A")
-    } else {
-        d3.select(lineToMove)
-            .attr("x1", x1)
-            .attr("x2", x1)
-            .attr("y1", y1-25)        
-            .attr("y2", y1-50)        
+            .style("fill", "#5A5A5A")      
     }
 
 }
 
-export function redrawList(curVal) {
+export function redrawList(curVal, callback) {
+    //TODO rewrite by reading actual list, get rid of array
+    const drawn = []
     array.forEach((val, i) => {
-            drawNode(val)
-            i == array.length - 1 && selectNode(curVal)
+        !drawn.includes(val) && drawNode(val)
+        document.querySelector(`#Node-${val}`).onclick = () => callback(val)
+        drawn.push(val)
         })
+    array.forEach((val, i) => {
+        array[i+1]>=0 && drawPointer(val, array[i+1])
+        })
+    selectNode(curVal)
 }
 
 export function selectNode(val) {
@@ -184,6 +247,7 @@ export function toggleDarkmode() {
 export function openContructControls() {
     document.querySelector('#construct-list').classList.replace('btn-outline-dark', 'btn-dark')
     document.querySelector('#modify-list').classList.replace('btn-dark', 'btn-outline-dark')
+    document.querySelector('#modify-list').classList.remove('active')
     document.querySelector('#construct-list').classList.replace('btn-outline-light', 'btn-light')
     document.querySelector('#modify-list').classList.replace('btn-light', 'btn-outline-light')
     hideThenShow(['modify-controls'], ['construct-controls'])
@@ -192,6 +256,7 @@ export function openContructControls() {
 export function openModifyControls() {
     document.querySelector('#modify-list').classList.replace('btn-outline-dark', 'btn-dark')
     document.querySelector('#construct-list').classList.replace('btn-dark', 'btn-outline-dark')
+    document.querySelector('#construct-list').classList.remove('active')
     document.querySelector('#modify-list').classList.replace('btn-outline-light', 'btn-light')
     document.querySelector('#construct-list').classList.replace('btn-light', 'btn-outline-light')
     hideThenShow(['construct-controls'], ['modify-controls'])
@@ -212,6 +277,7 @@ export function resetMatrixButtons() {
     document.querySelectorAll('.matrix').forEach(btn => btn.classList.replace('btn-dark', 'btn-outline-dark'))
     document.querySelectorAll('.matrix').forEach(btn => btn.classList.replace('btn-light', 'btn-outline-light'))
     document.querySelectorAll('.matrix-attr').forEach(btn => btn.innerHTML = '')
+    document.querySelectorAll('.matrix-attr').forEach(btn => btn.classList.add('disabled'))
     event.srcElement.classList.replace('btn-outline-dark','btn-dark')
     event.srcElement.classList.replace('btn-outline-light','btn-light')
 }
@@ -252,7 +318,9 @@ export function addToExpression(event) {
 }
 
 export function addToHistory(statementVar, statementExpr) {
-    document.querySelector("#call-history").innerHTML += `<li>${statementVar} = ${statementExpr}</li>`
+    if(isNaN(statementExpr)){
+        document.querySelector("#call-history").innerHTML += `<li>${statementVar} = ${statementExpr}</li>`
+    }
 }
 
 export function changeLabel(val,label) {

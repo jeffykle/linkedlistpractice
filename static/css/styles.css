@@ -11,6 +11,9 @@ body {
 	border-bottom: 1px solid black;
 }
 
+.tooltip {
+	style="white-space: pre-wrap;"
+}
 /*#svg {
 	border: 1px solid black;
 }*/

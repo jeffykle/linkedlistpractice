@@ -47,9 +47,9 @@ class LinkedList:
         while (current and current.next):
             previous = current
             current = current.next
-        if(self.current == self.getTail()):
-            self.current = None
         if(previous):
+            if(self.current == current):
+                self.current = previous
             current = previous
             current.next = None
         else:
@@ -96,6 +96,7 @@ class LinkedList:
             history.append(current)
             for h in history:
                 if(current.next == h):
+                    result.append(current.next.value)
                     return result
             current = current.next
         result.append(current.value if current else current)

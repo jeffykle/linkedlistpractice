@@ -1,6 +1,6 @@
-import {drawNode, selectNode, toggleDarkmode, pulseNode, 
+import {redrawList, drawNode, selectNode, toggleDarkmode, pulseNode, 
     eraseNode, eraseAll, resetMatrixButtons, resetCall, 
-    addToExpression, changeLabel, addToHistory, updateAttributes, changePointer} from './animation.js'
+    addToExpression, changeLabel, addToHistory, updateAttributes, drawPointer} from './animation.js'
 
 export function sendRequest(name, callback, ...args) {
     const request = new XMLHttpRequest();
@@ -16,11 +16,20 @@ export function sendRequest(name, callback, ...args) {
     request.send();
 }
 
+export function getList() {
+    sendRequest('get-list', res => {
+        updateAttributes(res)
+        res.current && redrawList(res.current.value, setClickedCurrent)
+    })
+}
+
 export function insertNode() {
     sendRequest('insert-node', res => {
         updateAttributes(res)
         if(res.current != null){
             drawNode(res.current.value)
+            drawPointer(res.current.value)
+            res.current.value > 0 && drawPointer(res.current.value - 1, res.current.value)
             selectNode(res.current.value)
             document.querySelector(`#Node-${res.current.value}`).onclick = () => setClickedCurrent(res.current.value)
         }
@@ -34,12 +43,15 @@ export function deleteList() {
     })
 }
 
+
+//TODO can't pop self pointing node
 export function popNode() {
     sendRequest('get-list', res => {
-        console.log(JSON.stringify(res,null,'\t'))
-        eraseNode(res.tail.value) })
+        console.log(res.tail)
+        res.tail && eraseNode(res.tail.value) })
     sendRequest('pop-node', res => {
         updateAttributes(res) 
+        res.current && selectNode(res.current.value)
     })
 }
 
@@ -80,12 +92,20 @@ export function getListVars() {
             btn.onclick = event => {
                 // First reset the other buttons
                 resetMatrixButtons(event)
-                document.querySelector(`#var${row}-2`).innerHTML = label
-                document.querySelector(`#var${row}-2`).value = label.toLowerCase()
-                document.querySelector(`#var${row}-2`).onclick = event => addToExpression(event)
-                document.querySelector(`#var${row}-3`).innerHTML = value && label+'.Next'
-                document.querySelector(`#var${row}-3`).value = value && label.toLowerCase()+'.next'
-                document.querySelector(`#var${row}-3`).onclick = event => addToExpression(event)
+                //#var-{row}-{col}
+                const rowCol2 = document.querySelector(`#var${row}-2`)
+                rowCol2.innerHTML = label
+                rowCol2.classList.remove("disabled")
+                rowCol2.value = label.toLowerCase()
+                rowCol2.onclick = event => addToExpression(event)
+                if (value) {
+                    const rowCol3 = document.querySelector(`#var${row}-3`)
+                    rowCol3.innerHTML = label+'.Next'
+                    rowCol3.classList.remove("disabled")
+                    rowCol3.value = label.toLowerCase()+'.next'
+                    rowCol3.onclick = event => addToExpression(event)
+                }
+                
             }
         })
     })
@@ -101,7 +121,8 @@ export function sendCall(statementVar, statementExpr) {
         Object.keys(res.diff).forEach( diff => {
             switch (diff) {
                 case 'current':
-                    res.current && selectNode(res.current.value)
+                    console.log(res.current)
+                    selectNode(res.current ? res.current.value : res.current)
                     break;
                 case 'previous':
                     res.previous && changeLabel(res.previous.value,"P")
@@ -117,7 +138,7 @@ export function sendCall(statementVar, statementExpr) {
                     const nodeValToChange = res[diff.split('.')[0]].value
                     console.log(`Change an arrow pointer now for  ${diff}`)
                     console.log(`Point ${nodeValToChange} to ${newNext}`)
-                    changePointer(nodeValToChange,newNext)
+                    drawPointer(nodeValToChange,newNext)
                     break;
                 default:
                     // Nothing to change

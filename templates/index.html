@@ -11,11 +11,14 @@
   <style>html{visibility: hidden;opacity:0;display:none;}</style>
 
   <script> //allows json to be passed from flask on first page load
-   var flaskData = JSON.parse('{{array | tojson | safe}}');
-   var array = flaskData.array;
-   var myList = JSON.parse('{{ myList | tojson | safe}}')
-   console.log(array)
-   console.log(myList)
+	var flaskData = JSON.parse('{{array | tojson | safe}}');
+	var array = flaskData.array;
+	// var myList = JSON.parse('{{ myList | tojson | safe}}')
+	// console.log(array)
+	// console.log(myList)
+	// $(document).ready(function(){
+	// $('[data-toggle="tooltip"]').tooltip();
+	// });
 	</script>
   <link rel="stylesheet" text="text/css" href="{{ url_for('static',filename='css/styles.css') }}">
 </head>
@@ -31,7 +34,7 @@
 		<div class="row">
 			<div class="col-md-2 col-sm-1 bordered float-right" id="meta-controls">
 				<div class="clearfix">			
-					<button id="construct-list" type="button" class="btn btn-dark btn-inline .active float-right" data-toggle="button" aria-pressed="true">Construct List</button>
+					<button id="construct-list" type="button" class="btn btn-dark btn-inline .active float-right" data-toggle="button" aria-pressed="true">Build/Navigate</button>
 				</div>
 				<div class="clearfix">				
 					<button id="modify-list" type="button" class="btn btn-outline-dark btn-inline float-right">Modify List</button>
@@ -68,10 +71,10 @@
 							<button id="var1-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
 						</div>
 						<div class="col-4">
-							<button id="var1-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var1-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 						<div class="col-4">
-							<button id="var1-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var1-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 					</div>
 
@@ -80,10 +83,10 @@
 							<button id="var2-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
 						</div>
 						<div class="col-4">
-							<button id="var2-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var2-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 						<div class="col-4">
-							<button id="var2-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var2-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 					</div>
 
@@ -92,10 +95,10 @@
 							<button id="var3-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
 						</div>
 						<div class="col-4">
-							<button id="var3-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var3-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 						<div class="col-4">
-							<button id="var3-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var3-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 					</div>
 
@@ -104,10 +107,10 @@
 							<button id="var4-1" type="button" class="btn matrix matrix-vars btn-outline-dark btn-block"></button>
 						</div>
 						<div class="col-4">
-							<button id="var4-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var4-2" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 						<div class="col-4">
-							<button id="var4-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block"></button>
+							<button id="var4-3" type="button" class="btn matrix matrix-attr btn-outline-dark btn-block disabled"></button>
 						</div>
 					</div>
 
@@ -169,17 +172,15 @@
 		<div class="row">
 			<div class="col-6 col-md-6">
 				<div class="row">
-					<button id="toggle-json" type="button"
+					<button id="toggle-json" type="button" 
 					class="btn btn-outline-dark btn-inline float-left"
-					data-toggle="collapse" data-target="#list-json" aria-expanded="false" aria-controls="list-json">Toggle Json</button>
+					data-toggle="collapse" data-target="#list-json" aria-expanded="false" aria-controls="list-json">Toggle/Peek JSON</button>
 				</div>
 				<div class="row">
 					<div class="collapse" id="list-json">
 						<div class="card card-body">
 							<div id="json-data" style="white-space: pre-wrap;">
-								{{ myList }}
 							</div>
-						  	<!-- <pre><code id="json-data">{{ myList }}</code></pre> -->
 						</div>
 					</div>
 				</div>
