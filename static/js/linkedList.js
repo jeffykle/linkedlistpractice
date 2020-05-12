@@ -40,6 +40,7 @@ export function deleteList() {
     sendRequest('delete-list', res => {
         eraseAll()
         updateAttributes(res) 
+        getListVars()
     })
 }
 

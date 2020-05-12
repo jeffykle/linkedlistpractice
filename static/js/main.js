@@ -1,11 +1,13 @@
 import {getList, insertNode, deleteList, popNode, getHead, getNext, getListVars, sendCall} from './linkedList.js'
-import {redrawList, toggleDarkmode, openContructControls, openModifyControls, backspaceCall} from './animation.js'
+import {redrawList, toggleDarkmode, openContructControls, openModifyControls, backspaceCall, clearHistory} from './animation.js'
 
 document.addEventListener('DOMContentLoaded', () => {
 
     true && toggleDarkmode()
 
 	getList()
+
+    document.querySelector(`#clear-history`).onclick = () => clearHistory()
 
     document.querySelector('#construct-list').onclick = ()  => openContructControls()
 

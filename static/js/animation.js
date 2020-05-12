@@ -67,11 +67,11 @@ export function drawPointer(fromVal, toVal = null) {
     const fromNode = d3.select(`#Node-${fromVal}`)
     const x1 = parseFloat(fromNode.attr("x"))
     const y1 = parseFloat(fromNode.attr("y"))
+    lineToMove && d3.select(lineToMove).remove()
     if(toVal || toVal === 0) {
         const newPos = d3.select(`#Node-${toVal}`)
         const x2 = newPos ? parseFloat(newPos.attr("x")) : null
         const y2 = newPos ? parseFloat(newPos.attr("y")) : null
-        lineToMove && d3.select(lineToMove).remove()
 
         if(x1 < x2) {
             fromNode.append("line")
@@ -142,7 +142,7 @@ export function drawPointer(fromVal, toVal = null) {
     } else { 
         // point to nothing
         const isNext = d3.select(`#Node-${fromVal+1}`)
-        if(!isNext) { // pointforward
+        if(isNext) { // pointforward
         fromNode.append("line")
             .attr("id", "line-"+fromVal)
             .attr("x1", x1)
@@ -330,4 +330,8 @@ export function changeLabel(val,label) {
 
 export function updateAttributes(res) {
     document.querySelector(`#json-data`).innerHTML = JSON.stringify(res,null,2)
+}
+
+export function clearHistory() {
+    document.querySelector(`#call-history`).innerHTML = ""
 }
