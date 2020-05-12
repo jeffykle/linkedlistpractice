@@ -1,14 +1,9 @@
 from flask import Flask, jsonify, render_template, request, url_for, session
-from flask_session import Session
 from LinkedList import *
 import os
 
 
 app = Flask(__name__)
-
-app.secret_key = os.environ.get('sessionKey')
-
-
 
 myList = LinkedList()
 
@@ -17,10 +12,6 @@ def index():
     array = {
         'array': myList.list()
     }
-    # if session['myList'] is not None:
-    #     session['myList'] = LinkedList()
-
-    # print(session)
     print('Page reloaded.', flush=True)
     return render_template("index.html", myList = json.loads(myList.json()), array = array)
 
@@ -76,7 +67,7 @@ def modifyList():
     result = json.loads(myList.json())
     result['diff'] = {".".join(var): oldvalue.json() if oldvalue else oldvalue}
     result = json.dumps(result)
-    
+
     return result
     
 
