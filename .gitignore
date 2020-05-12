@@ -1,7 +1,2 @@
-node_modules/
 __pycache__/
-docker-compose.yaml
-env.bat
-kill.ps1
-run.ps1
-package-lock.json
+LocalUtils/
