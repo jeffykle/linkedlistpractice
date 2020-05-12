@@ -5,6 +5,12 @@ body {
 	color: 'black';
 }
 
+a {
+	color: #5A5A5A;
+	margin-left: 10px;
+	margin-right: 10px;
+	padding: 10px;
+}
 
 #svg-row {
 	border-top: 1px solid black;
