@@ -72,4 +72,4 @@ def modifyList():
     
 
 if __name__ == "__main__":
-    app.run(port=process.env.PORT)
+    app.run(port=os.environ['PORT'])
