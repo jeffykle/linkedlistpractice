@@ -66,6 +66,15 @@ button {
 	    white-space:normal !important; 
 	    word-wrap: break-word; 
 	    word-break: normal;
+	    font-size: 50%;
+	}
+	h1 {
+		font-size: 7vw;
+		vertical-align: text-bottom;
+		padding: 5px;
+	}
+	a svg {
+		height: 7vw;
 	}
 }
 

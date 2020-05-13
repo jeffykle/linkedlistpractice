@@ -47,13 +47,20 @@ export function deleteList() {
 
 //TODO can't pop self pointing node
 export function popNode() {
-    sendRequest('get-list', res => {
-        console.log(res.tail)
-        res.tail && eraseNode(res.tail.value) })
-    sendRequest('pop-node', res => {
-        updateAttributes(res) 
-        res.current && selectNode(res.current.value)
-    })
+    const getThenPop = (callback) => {
+        sendRequest('get-list', res => {
+            console.log(res.tail)
+            res.tail && eraseNode(res.tail.value) })
+            callback()
+    }
+
+    getThenPop(function() {
+        sendRequest('pop-node', res => {
+            updateAttributes(res) 
+            res.current && selectNode(res.current.value)
+        })
+    }) 
+    
 }
 
 export function getHead() {

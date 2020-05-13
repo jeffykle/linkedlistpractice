@@ -197,10 +197,10 @@ export function pulseNode(val) {
     d3.select("#circle-"+val).raise()
     d3.select(`#node-${val}-val`).raise()
     d3.select("#circle-"+val)
-      .transition().duration(200).attr("r", "35")
+      .transition().duration(180).attr("r", "35")
       .transition().duration(190).attr("r", "25")
       .transition().duration(180).attr("r", "30")
-      .transition().duration(300).attr("r", "25")
+      .transition().duration(250).attr("r", "25")
 }
 
 export function eraseNode(val) {    
