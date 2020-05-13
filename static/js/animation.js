@@ -6,13 +6,24 @@ export function drawNode(val, toVal = null) {
     let cx = 25+80*val+50
     let cy = 93.75 * ( Math.ceil(cx / (window.innerWidth - 75)) )
     let h = parseInt(document.querySelector('#svg').style.height, 10)
+    console.log(`let cx = 25+80*val+50
+    let cy = 93.75 * ( Math.ceil(cx / (window.innerWidth - 75)) )
+    let h = parseInt(document.querySelector('#svg').style.height, 10)
+    cx ${cx}
+    window.innerWidth ${window.innerWidth}
+    window.innerWidth - 75 ${window.innerWidth - 75}
+    Math.ceil(cx / (window.innerWidth - 75)) ${Math.ceil(cx / (window.innerWidth - 75))}`)
+
     // if (cx > window.innerWidth) {
         // cy = cy 
     const isNewLine = cy + 25 > h
     if (cy + 25 > h) {
         document.querySelector('#svg').style.height = h + 93.75 + "px"
     }
-    cx = cx % window.innerWidth
+    cx = cx % (window.innerWidth - 75)
+
+    cx = cy > 100 ? cx + 50 : cx
+
         // console.log({"window":window.innerWidth, "x": cx, "y": cy, "box height": document.querySelector('#svg').style.height})
     // }
     const nodeShapes = svg.append('g')
@@ -62,42 +73,45 @@ export function drawNode(val, toVal = null) {
 };
 
 export function drawPointer(fromVal, toVal = null) {
-    console.log(toVal)
+
+    const appendMarker = (node) => {
+        node.append("marker")
+        .attr("id", "triangle")
+        .attr("refX", 6)
+        .attr("refY", 6)
+        .attr("markerWidth", 30)
+        .attr("markerHeight", 30)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M 0 0 12 6 0 12 3 6")
+        .style("fill", "#5A5A5A")
+    }
+
     const lineToMove = `#line-${fromVal}`
+    lineToMove && d3.select(lineToMove).remove()
+
     const fromNode = d3.select(`#Node-${fromVal}`)
     const x1 = parseFloat(fromNode.attr("x"))
     const y1 = parseFloat(fromNode.attr("y"))
-    lineToMove && d3.select(lineToMove).remove()
-    if(toVal || toVal === 0) {
+
+    if(toVal || toVal === 0) { //if toVal is provided
+
         const newPos = d3.select(`#Node-${toVal}`)
         const x2 = newPos ? parseFloat(newPos.attr("x")) : null
         const y2 = newPos ? parseFloat(newPos.attr("y")) : null
 
-        if(x1 < x2) {
+        if(x1 < x2) { // if pointing from left to right(normal case)
             fromNode.append("line")
                 .attr("id", "line-"+fromVal)
                 .attr("class","line")
                 .attr("x1", x1+25)
                 .attr("y1", y1)
                 .attr("x2", x2-25-6)
-                .attr("y2", y1)          
+                .attr("y2", y2)          
                 .attr("stroke-width", 1)
                 .attr("stroke", "#5A5A5A")
                 .attr("marker-end", "url(#triangle)")
-            fromNode.append("marker")
-                .attr("id", "triangle")
-                .attr("class","line")
-                .attr("refX", 6)
-                .attr("refY", 6)
-                .attr("markerWidth", 30)
-                .attr("markerHeight", 30)
-                .attr("orient", "auto")
-                .append("path")
-                .attr("d", "M 0 0 12 6 0 12 3 6")
-                .style("fill", "#5A5A5A")
-
-        } else if(x1 === x2) { 
-            // point to itself
+        } else if(x1 === x2) { // point to itself
             const lineGenerator = d3.line().curve(d3.curveNatural);
             const pathdata = lineGenerator([[x1+15,y1-30],[x1+20,y1-50],[x1,y1-60],[x1-20,y1-50],[x1-15,y1-30]])
 
@@ -107,19 +121,11 @@ export function drawPointer(fromVal, toVal = null) {
                 .attr("fill","none")
                 .attr("stroke", "#5A5A5A")
                 .attr("marker-end", "url(#triangle)")
-            fromNode.append("marker")
-                .attr("id", "triangle")
-                .attr("refX", 6)
-                .attr("refY", 6)
-                .attr("markerWidth", 30)
-                .attr("markerHeight", 30)
-                .attr("orient", "auto")
-                .append("path")
-                .attr("d", "M 0 0 12 6 0 12 3 6")
                 .style("fill", "#5A5A5A")
-        } else {
+        } else {  // point backwards with curve
             const lineGenerator = d3.line().curve(d3.curveNatural);
-            const pathdata = lineGenerator([[x1,y1-30],[(x1+x2)/2,y1-50],[x2+6,y2-30]])
+            const yOffset = y2 > y1 ? 1 : -1
+            const pathdata = lineGenerator([[x1,y1+30*yOffset],[(x1+x2)/2,y1+50*yOffset],[x2+6,y2-30*yOffset]])
 
             fromNode.append("path") 
                 .attr('d', pathdata)
@@ -127,17 +133,8 @@ export function drawPointer(fromVal, toVal = null) {
                 .attr("fill","none")
                 .attr("stroke", "#5A5A5A")
                 .attr("marker-end", "url(#triangle)")
-            fromNode.append("marker")
-                .attr("id", "triangle")
-                .attr("refX", 6)
-                .attr("refY", 6)
-                .attr("markerWidth", 30)
-                .attr("markerHeight", 30)
-                .attr("orient", "auto")
-                .append("path")
-                .attr("d", "M 0 0 12 6 0 12 3 6")
-                .style("fill", "#5A5A5A")
         }
+        appendMarker(fromNode)
 
     } else { 
         // point to nothing
@@ -164,16 +161,7 @@ export function drawPointer(fromVal, toVal = null) {
             .attr("stroke", "#5A5A5A")
             .attr("marker-end", "url(#triangle)")
         }
-        fromNode.append("marker")
-            .attr("id", "triangle")
-            .attr("refX", 6)
-            .attr("refY", 6)
-            .attr("markerWidth", 30)
-            .attr("markerHeight", 30)
-            .attr("orient", "auto")
-            .append("path")
-            .attr("d", "M 0 0 12 6 0 12 3 6")
-            .style("fill", "#5A5A5A")      
+        appendMarker(fromNode)   
     }
 
 }
@@ -250,7 +238,7 @@ export function openContructControls() {
     document.querySelector('#modify-list').classList.remove('active')
     document.querySelector('#construct-list').classList.replace('btn-outline-light', 'btn-light')
     document.querySelector('#modify-list').classList.replace('btn-light', 'btn-outline-light')
-    hideThenShow(['modify-controls'], ['construct-controls'])
+    hideThenShow(['modify-controls','statement-container'], ['construct-controls'])
 }
 
 export function openModifyControls() {
@@ -259,7 +247,7 @@ export function openModifyControls() {
     document.querySelector('#construct-list').classList.remove('active')
     document.querySelector('#modify-list').classList.replace('btn-outline-light', 'btn-light')
     document.querySelector('#construct-list').classList.replace('btn-light', 'btn-outline-light')
-    hideThenShow(['construct-controls'], ['modify-controls'])
+    hideThenShow(['construct-controls'], ['modify-controls','statement-container'])
 }
 
 function hideThenShow(elem1idArray, elem2idArray) {

@@ -54,9 +54,9 @@ def modifyList():
     print(".".join(var)+" = "+".".join(expr))
     if expr[0].isnumeric(): #clicking a node will pass in a numeric value to set as current
         selected = myList.head
-        while selected.value != int(expr[0]):
+        while selected.next and selected.value != int(expr[0]):
             selected = selected.next
-        right = selected
+        right = selected if selected.value == int(expr[0]) else None
     else:
         right = getattr(myList, expr[0]) if len(expr) == 1 else getattr(getattr(myList, expr[0]), expr[1]) # previous OR previous.next
     if(len(var)==1):
