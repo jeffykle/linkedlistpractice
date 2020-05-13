@@ -1,4 +1,4 @@
-html, body {
+body {
 	font-family: "Source Code Pro";
 	align-content: center;
 	background-color: 'white';
@@ -42,15 +42,37 @@ a {
 }
 
 
-
+/*
 button {
 	margin: 5px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+}*/
 
+button {
+	margin: 5px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-wrap: break-word;
+	display: block;
+	line-height: 1em;
+	max-height: 4em; 
 }
-button.truncate {
+
+@media screen and (max-width: 615px) {
+	button {
+		text-overflow: normal;
+	    white-space:normal !important; 
+	    word-wrap: break-word; 
+	    word-break: normal;
+	}
+}
+
+.statement {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .statement {
