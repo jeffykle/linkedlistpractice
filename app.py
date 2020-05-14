@@ -1,8 +1,6 @@
 from flask import Flask, jsonify, render_template, request, url_for, session
 from LinkedList import *
 import os, uuid
-from flask_session.__init__ import Session
-
 
 app = Flask(__name__)
 
