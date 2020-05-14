@@ -6,26 +6,15 @@ export function drawNode(val, toVal = null) {
     let cx = 25+80*val+50
     let cy = 93.75 * ( Math.ceil(cx / (window.innerWidth - 75)) )
     let h = parseInt(document.querySelector('#svg').style.height, 10)
-    console.log(`let cx = 25+80*val+50
-    let cy = 93.75 * ( Math.ceil(cx / (window.innerWidth - 75)) )
-    let h = parseInt(document.querySelector('#svg').style.height, 10)
-    cx ${cx}
-    window.innerWidth ${window.innerWidth}
-    window.innerWidth - 75 ${window.innerWidth - 75}
-    Math.ceil(cx / (window.innerWidth - 75)) ${Math.ceil(cx / (window.innerWidth - 75))}`)
-
-    // if (cx > window.innerWidth) {
-        // cy = cy 
     const isNewLine = cy + 25 > h
+
     if (cy + 25 > h) {
         document.querySelector('#svg').style.height = h + 93.75 + "px"
     }
+    
     cx = cx % (window.innerWidth - 75)
-
     cx = cy > 100 ? cx + 50 : cx
 
-        // console.log({"window":window.innerWidth, "x": cx, "y": cy, "box height": document.querySelector('#svg').style.height})
-    // }
     const nodeShapes = svg.append('g')
         .attr('class', 'node-group')
         .attr('id', 'Node-'+val)
@@ -121,11 +110,10 @@ export function drawPointer(fromVal, toVal = null) {
                 .attr("fill","none")
                 .attr("stroke", "#5A5A5A")
                 .attr("marker-end", "url(#triangle)")
-                .style("fill", "#5A5A5A")
         } else {  // point backwards with curve
             const lineGenerator = d3.line().curve(d3.curveNatural);
             const yOffset = y2 > y1 ? 1 : -1
-            const pathdata = lineGenerator([[x1,y1+30*yOffset],[(x1+x2)/2,y1+50*yOffset],[x2+6,y2-30*yOffset]])
+            const pathdata = lineGenerator([[x1,y1+30*yOffset],[(x1+x2)/2,y1+50*yOffset],[x2+6,y2+30*yOffset]])
 
             fromNode.append("path") 
                 .attr('d', pathdata)

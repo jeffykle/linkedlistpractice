@@ -45,22 +45,15 @@ export function deleteList() {
 }
 
 
-//TODO can't pop self pointing node
+//TODO can't pop self pointing node, generally misbehaves on different devices
 export function popNode() {
-    const getThenPop = (callback) => {
         sendRequest('get-list', res => {
             console.log(res.tail)
             res.tail && eraseNode(res.tail.value) })
-            callback()
-    }
-
-    getThenPop(function() {
         sendRequest('pop-node', res => {
             updateAttributes(res) 
             res.current && selectNode(res.current.value)
         })
-    }) 
-    
 }
 
 export function getHead() {
@@ -121,7 +114,6 @@ export function getListVars() {
 
 export function sendCall(statementVar, statementExpr) {
     sendRequest('modify-list', res => {
-        console.log(JSON.stringify(res,null,'\t'))
         resetCall()
         getListVars(res)
         addToHistory(statementVar, statementExpr)
@@ -129,7 +121,6 @@ export function sendCall(statementVar, statementExpr) {
         Object.keys(res.diff).forEach( diff => {
             switch (diff) {
                 case 'current':
-                    console.log(res.current)
                     selectNode(res.current ? res.current.value : res.current)
                     break;
                 case 'previous':
@@ -144,8 +135,6 @@ export function sendCall(statementVar, statementExpr) {
                 case diff.split('.')[0]+'.next':
                     const newNext = res[diff.split('.')[0]].next//res.current.next
                     const nodeValToChange = res[diff.split('.')[0]].value
-                    console.log(`Change an arrow pointer now for  ${diff}`)
-                    console.log(`Point ${nodeValToChange} to ${newNext}`)
                     drawPointer(nodeValToChange,newNext)
                     break;
                 default:
