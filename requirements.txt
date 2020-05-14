@@ -5,5 +5,5 @@ itsdangerous
 Jinja2
 MarkupSafe
 Werkzeug
-flask-session
+Flask-Session
 
