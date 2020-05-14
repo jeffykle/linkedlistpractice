@@ -112,8 +112,24 @@ export function drawPointer(fromVal, toVal = null) {
                 .attr("marker-end", "url(#triangle)")
         } else {  // point backwards with curve
             const lineGenerator = d3.line().curve(d3.curveNatural);
-            const yOffset = y2 > y1 ? 1 : -1
-            const pathdata = lineGenerator([[x1,y1+30*yOffset],[(x1+x2)/2,y1+50*yOffset],[x2+6,y2+30*yOffset]])
+            let startY, midY, endY
+            if(y1 == y2) { 
+                startY = y1 - 30
+                endY = y2 - 30
+                midY = y1 - 50
+            } else if (y2 > y1) {
+                startY = y1 + 30
+                endY = y2 - 30
+                midY = (y2 + y1) / 2 - 10
+            }
+            else {
+                startY = y1 - 30
+                endY = y2 + 30
+                midY = (y2 + y1) / 2 + 10
+            }
+
+            const pathdata = lineGenerator([[x1,startY],[(x1+x2)/2,midY],[x2+6,endY]])
+
 
             fromNode.append("path") 
                 .attr('d', pathdata)
