@@ -9,4 +9,4 @@ verify_ssl = true
 Flask = "==1.1.1"
 
 [requires]
-python_version = "3.8"
+python_version = "3.6.6"
