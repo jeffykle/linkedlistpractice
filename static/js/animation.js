@@ -142,7 +142,8 @@ export function drawPointer(fromVal, toVal = null) {
 
     } else { 
         // point to nothing
-        const isNext = d3.select(`#Node-${fromVal+1}`)
+        const isNext = document.querySelector(`#Node-${fromVal+1}`)
+        console.log(isNext)
         if(isNext) { // pointforward
         fromNode.append("line")
             .attr("id", "line-"+fromVal)
