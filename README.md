@@ -19,7 +19,7 @@
 	- Current will automatically be set to the new node when insterting a node. The Current Node is represented in orange.
 	- Previous and Next nodes will remain null unless you change their values. They are represented by "P" and "N", respectively.
 
-- The app uses async Javascript requests to the Flask server to modify the list in Python and retrieve JSON data about the list.
+- The app uses ajax Javascript requests to the Flask server to modify the list in Python and retrieve JSON data about the list.
 
 ## Caveats
 
